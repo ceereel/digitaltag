@@ -1,0 +1,70 @@
+/* -------------------------------------------------------------------
+   styles.css – Palette corporate & finitions UI
+   ----------------------------------------------------------------- */
+
+   @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+   :root{
+     /*  Palette principale  */
+     --accent       : #0077d2;
+     --accent-dark  : #005a9f;
+     --bg-page      : #ffffff;
+     --bg-card      : #f9fafb;
+     --border-card  : #e5e7eb;
+     --text-main    : #374151;   /* gris neutre 900/800 Tailwind */
+     --text-muted   : #6b7280;   /* gris neutre 500            */
+     --shadow-card  : 0 4px 14px rgba(0,0,0,.08);
+   }
+   
+   html,body{
+     background : var(--bg-page);
+     color      : var(--text-main);
+     font-family: "Inter", system-ui, sans-serif;
+   }
+   
+   /* ------------- Timeline + Progress ------------------------------ */
+   .timeline-dot.active        { background:var(--accent)!important; }
+   #globalProgress             { background:linear-gradient(90deg,var(--accent),var(--accent-dark)); }
+   
+   /* ------------- Carte (phase + résumé) --------------------------- */
+   .card-phase{
+     background : var(--bg-card);
+     border     : 1px solid var(--border-card);
+     border-radius: 1rem;
+     box-shadow   : var(--shadow-card);
+     transition   : transform .25s, box-shadow .25s;
+   }
+   
+   .card-phase:hover{
+     transform : translateY(-6px);
+     box-shadow: 0 10px 32px rgba(0,0,0,.10);
+   }
+   
+   .card-icon{
+     font-size   : 2.75rem;      /* ≈ 44 px */
+     margin-bottom: .75rem;
+     color       : var(--accent);
+   }
+   
+   /* ------------- Modale ------------------------------------------- */
+   #modalBox{
+     border-top   : 6px solid var(--accent);        /* re-colorisé à l’ouverture */
+     box-shadow   : 0 8px 48px rgba(0,0,0,.15);
+     animation    : modalIn .35s cubic-bezier(.16,.75,.47,1);
+   }
+   
+   @keyframes modalIn{
+     0%   { transform:translateY(40px); opacity:0; }
+     100% { transform:translateY(0);    opacity:1; }
+   }
+   
+   /* ------------- Connexion SVG (animation “dash”) ---------------- */
+   @keyframes dash{
+     from{ stroke-dashoffset:1000; }
+     to  { stroke-dashoffset:0;   }
+   }
+   .connection-line.animate{
+     stroke-dasharray:1000;
+     animation:dash 1.4s ease-out forwards;
+   }
+   

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital TAG – PME Journey Map</title>
+
+  <!-- Tailwind CDN (ou ton build local) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- styles persos -->
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body class="antialiased text-gray-700 bg-white">
+
+  <!-- ░░ Header ░░ -->
+  <header class="text-center my-10">
+    <h1 class="text-4xl font-extrabold text-[#0077d2]">Digital TAG</h1>
+    <h2 class="text-lg font-semibold  text-[#0077d2]">PME Journey Map</h2>
+  </header>
+
+  <!-- ░░ Section dynamique (progress + timeline + cartes) ░░ -->
+  <main id="app" class="px-4"></main>
+
+  <!-- ░░ Modale (affichée par JS) ░░ -->
+  <div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+    <div id="modalBox"
+         class="bg-white rounded-2xl shadow-2xl p-8 w-[90%] max-w-[46rem] max-h-[90vh] overflow-y-auto border-t-8 border-transparent">
+      <!-- header -->
+      <div class="flex justify-between items-start mb-6">
+        <div class="flex items-center gap-4">
+          <div id="modalIcon" class="text-3xl"></div>
+          <div>
+            <h2 id="modalTitle" class="text-2xl font-bold"></h2>
+            <p  id="modalSubtitle" class="text-gray-500 text-sm"></p>
+          </div>
+        </div>
+        <button id="modalCloseBtn" class="text-gray-400 hover:text-gray-700 text-3xl font-bold">
+          &times;
+        </button>
+      </div>
+      <!-- body -->
+      <div id="modalContent" class="prose max-w-none"></div>
+      <!-- footer -->
+      <div class="text-center mt-8">
+        <button class="bg-[#0077d2] hover:bg-[#005a9f] text-white rounded-lg px-6 py-3 font-semibold"
+                id="modalCloseBtnBottom">
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ░░ Modules ES (ordre important) ░░ -->
+  <script type="module" src="./Services/PhaseService.js"></script>
+  <script type="module" src="./Components/Modal.js"></script>
+  <script type="module" src="./Components/Cards.js"></script>
+  <script type="module" src="./Services/AnimationServices.js"></script>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Digital TAG – PME Journey Map</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Thème rapide -->
+  <style>
+    :root{--accent:#0077d2;--body:#374151}
+    body{background:#fff;color:var(--body);font-family:Inter,system-ui,sans-serif}
+    #globalProgress{background:linear-gradient(90deg,var(--accent),#005a9f)}
+    .timeline-dot.active{background:var(--accent)!important}
+    /* Effet hover carte */
+    .journey-step{transition:transform .25s,box-shadow .25s}
+    .journey-step:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 8px 24px rgba(0,0,0,.25)}
+    /* Animation traits */
+    .connection-line{stroke-dasharray:1000;stroke-dashoffset:1000;animation:dash 6s linear forwards}
+    @keyframes dash{to{stroke-dashoffset:0}}
+    /* Smooth modal transition */
+    #modal {
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    #modal.flex {
+      opacity: 1;
+      transform: scale(1);
+    }
+  </style>
+</head>
+
+<body class="antialiased">
+
+<!-- ░░ HEADER ░░ -->
+<header class="text-center my-10 px-4">
+  <h1 class="text-4xl font-extrabold text-[var(--accent)]">Digital TAG</h1>
+  <h2 class="text-lg font-semibold text-[var(--accent)]">PME Journey Map</h2>
+</header>
+
+<!-- ░░ Progression ░░ -->
+<section class="max-w-4xl mx-auto px-4">
+  <div class="h-2 rounded-full bg-gray-200 mb-3">
+    <div id="globalProgress" class="h-2 rounded-full transition-all duration-1000" style="width:0%"></div>
+  </div>
+  <p class="text-sm text-gray-500">Progression : <span id="progressText">0%</span></p>
+</section>
+
+<!-- ░░ Timeline ░░ -->
+<section class="flex justify-center my-10">
+  <div class="flex space-x-4">
+    <span class="timeline-dot w-4 h-4 rounded-full bg-gray-300" data-phase="1"></span>
+    <span class="timeline-dot w-4 h-4 rounded-full bg-gray-300" data-phase="2"></span>
+    <span class="timeline-dot w-4 h-4 rounded-full bg-gray-300" data-phase="3"></span>
+    <span class="timeline-dot w-4 h-4 rounded-full bg-gray-300" data-phase="4"></span>
+    <span class="timeline-dot w-4 h-4 rounded-full bg-gray-300" data-phase="5"></span>
+  </div>
+</section>
+
+<!-- ░░ Roadmap ░░ -->
+<section class="relative max-w-6xl mx-auto px-4">
+  <!-- Traits -->
+  <svg class="absolute inset-0 w-full h-full pointer-events-none z-0">
+    <defs>
+      <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#0077d2" stop-opacity=".55"/>
+        <stop offset="100%" stop-color="#8b5cf6" stop-opacity=".55"/>
+      </linearGradient>
+      <linearGradient id="cyclicGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#8b5cf6"/>
+        <stop offset="50%" stop-color="#10b981"/>
+        <stop offset="100%" stop-color="#0077d2"/>
+      </linearGradient>
+    </defs>
+    <path class="connection-line" stroke="url(#lineGradient)" stroke-width="3" fill="none" d="M150 200Q300 150 450 200"/>
+    <path class="connection-line" stroke="url(#lineGradient)" stroke-width="3" fill="none" d="M450 200Q600 250 750 200"/>
+    <path class="connection-line" stroke="url(#lineGradient)" stroke-width="3" fill="none" d="M750 200Q900 150 1050 200"/>
+    <path class="connection-line" stroke="url(#lineGradient)" stroke-width="3" fill="none" d="M1050 200Q1200 250 1350 200"/>
+    <path id="cyclicLine"  class="connection-line" stroke="url(#cyclicGradient)" stroke-width="4" fill="none" d="M1350 250Q750 380 150 250"/>
+    <polygon id="cyclicArrow" class="connection-line" fill="url(#cyclicGradient)" points="140,240 160,250 140,260"/>
+  </svg>
+
+  <!-- Cartes phases -->
+  <div class="relative z-10 grid gap-6 lg:grid-cols-5 text-white text-[14px]/relaxed font-medium">
+
+    <!-- Phase 1 -->
+    <button onclick="openModal(1)" class="journey-step bg-gradient-to-br from-green-600 to-green-800 rounded-2xl p-6 shadow-xl border border-green-400/30 flex flex-col">
+      <div class="text-center mb-4">
+        <div class="text-6xl mb-2">🧭</div><h3 class="text-xl font-bold">Phase 1</h3><p class="text-sm font-semibold">Entrée guidée</p>
+      </div>
+      <div class="space-y-3">
+        <div class="bg-green-700/50 rounded-lg p-3"><p class="font-semibold">🎯 Auto-diagnostic</p><p>5 dimensions clés</p></div>
+        <div class="bg-green-700/50 rounded-lg p-3"><p class="font-semibold">📊 Indicateurs visuels</p><p>Radar, scores, matrices</p></div>
+      </div>
+      <p class="mt-auto text-center text-xs opacity-80 pt-5">Cliquez pour détails</p>
+    </button>
+
+    <!-- Phase 2 -->
+    <button onclick="openModal(2)" class="journey-step bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl p-6 shadow-xl border border-blue-400/30 flex flex-col">
+      <div class="text-center mb-4">
+        <div class="text-6xl mb-2">📊</div><h3 class="text-xl font-bold">Phase 2</h3><p class="text-sm font-semibold">Analyse comparative</p>
+      </div>
+      <div class="space-y-3">
+        <div class="bg-blue-700/50 rounded-lg p-3"><p class="font-semibold">🔍 Benchmarking</p><p>Comparaison sectorielle</p></div>
+        <div class="bg-blue-700/50 rounded-lg p-3"><p class="font-semibold">📈 Dashboards</p><p>Données dynamiques</p></div>
+      </div>
+      <p class="mt-auto text-center text-xs opacity-80 pt-5">Cliquez pour détails</p>
+    </button>
+
+    <!-- Phase 3 -->
+    <button onclick="openModal(3)" class="journey-step bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl p-6 shadow-xl border border-purple-400/30 flex flex-col">
+      <div class="text-center mb-4">
+        <div class="text-6xl mb-2">🧩</div><h3 class="text-xl font-bold">Phase 3</h3><p class="text-sm font-semibold">Structuration</p>
+      </div>
+      <div class="space-y-3">
+        <div class="bg-purple-700/50 rounded-lg p-3"><p class="font-semibold">🎨 Canevas interactif</p><p>Business Model Canvas</p></div>
+        <div class="bg-purple-700/50 rounded-lg p-3"><p class="font-semibold">⚙️ Blocs éditables</p><p>Objectifs, jalons</p></div>
+      </div>
+      <p class="mt-auto text-center text-xs opacity-80 pt-5">Cliquez pour détails</p>
+    </button>
+
+    <!-- Phase 4 -->
+    <button onclick="openModal(4)" class="journey-step bg-gradient-to-br from-orange-600 to-orange-800 rounded-2xl p-6 shadow-xl border border-orange-400/30 flex flex-col">
+      <div class="text-center mb-4">
+        <div class="text-6xl mb-2">🤖</div><h3 class="text-xl font-bold">Phase 4</h3><p class="text-sm font-semibold">IA Accompagnement</p>
+      </div>
+      <div class="space-y-3">
+        <div class="bg-orange-700/50 rounded-lg p-3"><p class="font-semibold">🧠 Agent IA</p><p>Conseils personnalisés</p></div>
+        <div class="bg-orange-700/50 rounded-lg p-3"><p class="font-semibold">💡 Suggestions</p><p>Actions évolutives</p></div>
+      </div>
+      <p class="mt-auto text-center text-xs opacity-80 pt-5">Cliquez pour détails</p>
+    </button>
+
+    <!-- Phase 5 -->
+    <button onclick="openModal(5)" class="journey-step bg-gradient-to-br from-red-600 to-red-800 rounded-2xl p-6 shadow-xl border border-red-400/30 flex flex-col">
+      <div class="text-center mb-4">
+        <div class="text-6xl mb-2">📍</div><h3 class="text-xl font-bold">Phase 5</h3><p class="text-sm font-semibold">Formalisation</p>
+      </div>
+      <div class="space-y-3">
+        <div class="bg-red-700/50 rounded-lg p-3"><p class="font-semibold">🗺️ Roadmap finale</p><p>Court/moyen/long terme</p></div>
+        <div class="bg-red-700/50 rounded-lg p-3"><p class="font-semibold">📤 Export & partage</p><p>Pilotage & reporting</p></div>
+      </div>
+      <p class="mt-auto text-center text-xs opacity-80 pt-5">Cliquez pour détails</p>
+    </button>
+  </div>
+</section>
+
+<!-- ░░ Badge phase courante ░░ -->
+<div class="fixed bottom-8 right-8 bg-[var(--accent)] text-white rounded-full p-4 shadow-xl text-center">
+  <div id="currentPhaseIcon" class="text-2xl">🧭</div>
+  <div id="currentPhaseText" class="text-[11px] font-semibold">Phase 1</div>
+</div>
+
+<!-- ░░ Modale ░░ -->
+<div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50" onclick="closeModal(event)">
+  <div id="modalBox" class="bg-white rounded-2xl shadow-2xl p-8 w-[90%] max-w-[46rem] max-h-[90vh] overflow-y-auto border-t-8 border-transparent">
+    <div class="flex justify-between items-start mb-6">
+      <div class="flex items-center gap-4">
+        <div id="modalIcon" class="text-3xl"></div>
+        <div>
+          <h2 id="modalTitle" class="text-2xl font-bold"></h2>
+          <p id="modalSubtitle" class="text-gray-500 text-sm"></p>
+        </div>
+      </div>
+      <button onclick="closeModal()" class="text-gray-400 hover:text-gray-700 text-3xl font-bold">&times;</button>
+    </div>
+    <div id="modalContent" class="prose max-w-none"></div>
+    <div class="text-center mt-8">
+      <button onclick="closeModal()" class="bg-[var(--accent)] hover:bg-[#005a9f] text-white rounded-lg px-6 py-3 font-semibold">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* Couleurs d’accent */
+const accentHex={green:'#22c55e',blue:'#3b82f6',purple:'#8b5cf6',orange:'#fb923c',red:'#ef4444'};
+
+/* Contenu complet (gris clair pour blocs) */
+const phaseDetails={
+  1:{title:"Phase 1 - Entrée guidée",subtitle:"Auto-diagnostic de maturité digitale",icon:"🧭",color:"green",content:`
+    <h3 class="text-xl font-bold mb-4 text-green-600">🎯 Auto-diagnostic</h3>
+    <p class="mb-6">Le module d'auto-diagnostic vous permet d'évaluer…</p>
+    <div class="bg-gray-100 rounded-lg p-4 mb-6">
+      <h4 class="font-semibold mb-2 text-green-600">✨ Fonctionnalités principales :</h4>
+      <ul class="list-disc list-inside space-y-2 text-gray-700">
+        <li>Questionnaire structuré sur 5 dimensions</li>
+        <li>Indicateurs visuels : diagrammes radar, scores</li>
+        <li>Matrices synthétiques de positionnement</li>
+        <li>Base d'analyse pour la stratégie digitale</li>
+      </ul>
+    </div>
+    <p class="mb-4">En répondant au questionnaire, vous obtenez…</p>
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <p class="text-blue-700"><strong>💡 Avantage :</strong> module activable à tout moment.</p>
+    </div>`},
+  2:{title:"Phase 2 - Analyse comparative",subtitle:"Observatoire et benchmarking sectoriel",icon:"📊",color:"blue",content:`
+    <h3 class="text-xl font-bold mb-4 text-blue-600">🔍 Observatoire</h3>
+    <p class="mb-6">Ce module vous permet de situer votre entreprise…</p>
+    <div class="bg-gray-100 rounded-lg p-4 mb-6">
+      <h4 class="font-semibold mb-2 text-blue-600">✨ Fonctionnalités principales :</h4>
+      <ul class="list-disc list-inside space-y-2 text-gray-700">
+        <li>Comparaisons par secteur, taille ou maturité</li>
+        <li>Tableaux de bord dynamiques</li>
+        <li>Export PDF et API interne</li>
+      </ul>
+    </div>
+    <p class="mb-4">En croisant les données par secteur…</p>
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <p class="text-blue-700"><strong>💡 Avantage :</strong> consultable à tout moment.</p>
+    </div>`},
+  3:{title:"Phase 3 - Structuration",subtitle:"Canevas de transformation digitale",icon:"🧩",color:"purple",content:`
+    <h3 class="text-xl font-bold mb-4 text-purple-600">🎨 Canevas</h3>
+    <p class="mb-6">Ce module vous permet de construire votre feuille…</p>
+    <div class="bg-gray-100 rounded-lg p-4 mb-6">
+      <h4 class="font-semibold mb-2 text-purple-600">✨ Fonctionnalités principales :</h4>
+      <ul class="list-disc list-inside space-y-2 text-gray-700">
+        <li>Interface drag-and-drop intuitive</li>
+        <li>Blocs éditables : objectifs, jalons…</li>
+        <li>Inspiré du Business Model Canvas</li>
+      </ul>
+    </div>
+    <p class="mb-4">Inspiré de modèles scientifiques reconnus…</p>
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <p class="text-blue-700"><strong>💡 Avantage :</strong> outil évolutif, modifiable.</p>
+    </div>`},
+  4:{title:"Phase 4 - IA Accompagnement",subtitle:"Agent conversationnel intelligent",icon:"🤖",color:"orange",content:`
+    <h3 class="text-xl font-bold mb-4 text-orange-600">🧠 Agent conversationnel</h3>
+    <p class="mb-6">Digital TAG intègre un agent conversationnel…</p>
+    <div class="bg-gray-100 rounded-lg p-4 mb-6">
+      <h4 class="font-semibold mb-2 text-orange-600">✨ Fonctionnalités principales :</h4>
+      <ul class="list-disc list-inside space-y-2 text-gray-700">
+        <li>Reformulation des diagnostics</li>
+        <li>Suggestions d'actions personnalisées</li>
+        <li>Détection d'incohérences</li>
+      </ul>
+    </div>
+    <p class="mb-4">Transversal à tous les modules…</p>
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <p class="text-blue-700"><strong>💡 Avantage :</strong> accompagnement automatisé.</p>
+    </div>`},
+  5:{title:"Phase 5 - Formalisation",subtitle:"Feuille de route numérique",icon:"📍",color:"red",content:`
+    <h3 class="text-xl font-bold mb-4 text-red-600">🗺️ Feuille de route</h3>
+    <p class="mb-6">À partir des données du canevas, ce module génère…</p>
+    <div class="bg-gray-100 rounded-lg p-4 mb-6">
+      <h4 class="font-semibold mb-2 text-red-600">✨ Fonctionnalités principales :</h4>
+      <ul class="list-disc list-inside space-y-2 text-gray-700">
+        <li>Synthèse visuelle des actions</li>
+        <li>Export et partage facilités</li>
+        <li>Outil de pilotage interne</li>
+      </ul>
+    </div>
+    <p class="mb-4">Outil de pilotage interne ou reporting…</p>
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <p class="text-blue-700"><strong>💡 Avantage :</strong> communication claire & suivi.</p>
+    </div>`}
+};
+
+/* Références DOM pour la modale */
+const modal          = document.getElementById('modal'),
+      modalBox       = document.getElementById('modalBox'),
+      modalIcon      = document.getElementById('modalIcon'),
+      modalTitle     = document.getElementById('modalTitle'),
+      modalSubtitle  = document.getElementById('modalSubtitle'),
+      modalContent   = document.getElementById('modalContent');
+
+/* Ouvre une phase */
+function openModal(phase){
+  const d=phaseDetails[phase];if(!d)return;
+  modalIcon.textContent=d.icon;
+  modalTitle.textContent=d.title;
+  modalSubtitle.textContent=d.subtitle;
+  modalContent.innerHTML=d.content;
+  modalBox.style.borderTopColor=accentHex[d.color]||'var(--accent)';
+  modalTitle.style.color=accentHex[d.color]||'var(--accent)';
+  modal.classList.remove('hidden');modal.classList.add('flex');
+  document.body.style.overflow='hidden';
+}
+function closeModal(e){if(e&&e.target!==e.currentTarget)return;
+  modal.classList.remove('flex');
+  setTimeout(()=>{
+    modal.classList.add('hidden');
+    document.body.style.overflow='auto';
+  },300); // Match the transition duration
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+/* Animation timeline */
+const dots=[...document.querySelectorAll('.timeline-dot')],
+      lines=[...document.querySelectorAll('.connection-line')],
+      globalProgress=document.getElementById('globalProgress'),
+      progressText  =document.getElementById('progressText'),
+      currentPhaseIcon=document.getElementById('currentPhaseIcon'),
+      currentPhaseText=document.getElementById('currentPhaseText'),
+      icons=['🧭','📊','🧩','🤖','📍'];
+
+function animateJourney(){
+  dots.forEach(d=>d.classList.remove('active'));
+  lines.forEach(l=>l.classList.remove('animate'));
+  let delay=0;
+  dots.forEach((d,i)=>{
+    setTimeout(()=>{
+      d.classList.add('active');
+      lines[i]&&lines[i].classList.add('animate');
+      const pct=((i+1)/dots.length)*100;
+      globalProgress.style.width=pct+'%';
+      progressText.textContent=Math.round(pct)+'%';
+      currentPhaseIcon.textContent=icons[i];
+      currentPhaseText.textContent=`Phase ${i+1}`;
+    },delay);
+    delay+=1200;
+  });
+}
+window.addEventListener('DOMContentLoaded',()=>{setTimeout(animateJourney,400);setInterval(animateJourney,15000);});
+</script>
+</body>
+</html>
