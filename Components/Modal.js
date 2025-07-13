@@ -24,6 +24,15 @@
      const sendBtn = document.getElementById("sendBtn");
    
      const ratingBtns = [...document.querySelectorAll(".rating-btn")];
+
+     const API = 'https://digitaltag-feedback-api.onrender.com/feedback';
+
+fetch(API, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(payload)        // { org, sect, mail, module, rating, comment }
+}).then(()=> showSuccess())
+  .catch(()=> alert("Envoi impossible – réessayez plus tard"));
    
      /* ------------ État interne ------------ */
      let current  = 0;       // index de la phase affichée
