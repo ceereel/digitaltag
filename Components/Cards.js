@@ -3,7 +3,7 @@ export function createAndAppendCards(phases) {
     const container = document.getElementById("cardContainer");
     if (!container) return console.error("Container des cartes non trouvé.");
   
-    container.innerHTML = "";
+    container.innerHTML = ""; // reset
   
     phases.forEach((phase, idx) => {
       /* Sécurisation des tableaux */
@@ -20,14 +20,22 @@ export function createAndAppendCards(phases) {
       card.className = "phase-card";
       card.style.borderColor = phase.accent;
       card.dataset.idx = idx;
+      /* on passe la couleur accent à CSS via une variable inline */
+      card.style.setProperty("--accent", phase.accent);
   
       card.innerHTML = `
         <div class="phase-header">
           <div class="phase-icon" style="color:${phase.accent}">${phase.ic}</div>
           <div class="phase-title">${phase.title}</div>
           <div class="phase-sub">${phase.sub}</div>
-          <div class="business-goal italic text-sm mt-2 text-gray-600">« ${phase.objectiveSentence} »</div>
+  
+          <!-- Badge Business Goal -->
+          <div class="business-goal"
+               style="background-color:${phase.accent}1A; color:${phase.accent}">
+            « ${phase.objectiveSentence} »
+          </div>
         </div>
+
       `;
   
       /* Ouverture modale */
