@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>PME Journey Map</title>
+
+  <!-- Inter + Tailwind reset -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ───────────────── ÉCRAN DE CONNEXION ───────────────── -->
+  <div id="loginOverlay" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+    <form id="loginForm" class="bg-white rounded-xl p-8 w-full max-w-md shadow-2xl space-y-6">
+      <h2 class="text-xl font-bold text-center mb-2">Connexion rapide</h2>
+
+      <label class="block text-sm font-medium">Organisation
+        <input id="org" type="text" class="input" required />
+      </label>
+
+      <label class="block text-sm font-medium">Secteur d’activité
+        <input id="sect" type="text" class="input" required />
+      </label>
+
+      <label class="block text-sm font-medium">Adresse e-mail
+        <input id="mail" type="email" class="input" required />
+      </label>
+
+      <button class="btn-primary w-full" type="submit">Accéder à la map</button>
+    </form>
+  </div>
+
+  <!-- ───────────────── HEADER ───────────────── -->
+  <header class="text-center py-8">
+    <h1 class="text-2xl font-bold">PME Journey Map</h1>
+    <p class="text-sm text-gray-600">Vue synthétique des 5 modules Digital TAG</p>
+  </header>
+
+  <!-- ───────────────── CARTES ───────────────── -->
+  <main>
+    <div id="cardContainer"></div>
+  </main>
+
+  <!-- ───────────────── MODALE ───────────────── -->
+  <div id="modal" class="modal hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div id="modalBox" class="modal-box">
+      <header class="flex justify-between items-start mb-6">
+        <div class="flex items-start gap-4">
+          <div id="mIcon" class="text-4xl"></div>
+          <div>
+            <h2 id="mTitle" class="text-lg font-bold"></h2>
+            <p id="mSub" class="text-sm opacity-70"></p>
+          </div>
+        </div>
+        <button id="closeBtn" class="text-3xl font-bold opacity-60 hover:opacity-100">&times;</button>
+      </header>
+
+      <div id="mContent" class="modal-body"></div>
+
+      <!-- Évaluation -->
+      <section class="mt-10 p-6 border rounded-xl space-y-6">
+        <h3 class="text-center text-lg font-semibold">💭 Votre évaluation</h3>
+        <div class="flex justify-center space-x-10">
+          <button class="rating-btn text-4xl" data-rating="😞">😞</button>
+          <button class="rating-btn text-4xl" data-rating="😐">😐</button>
+          <button class="rating-btn text-4xl" data-rating="😊">😊</button>
+        </div>
+        <textarea id="fb" class="w-full h-24 px-3 py-2 border rounded text-sm resize-none" placeholder="Commentaire (optionnel)"></textarea>
+        <div class="text-center">
+          <button id="sendBtn" class="btn-primary">Envoyer</button>
+        </div>
+        <div id="msg" class="hidden text-sm text-green-800 bg-green-50 text-center py-2 rounded">
+          🎉 Merci pour votre retour !
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>
