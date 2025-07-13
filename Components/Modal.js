@@ -33,27 +33,23 @@ export function setupModal(phases) {
   
       /* Corps de texte */
       mC.innerHTML = `
-        <p class="mb-4">${p.desc}</p>
-  
-        <blockquote class="obj-quote mb-6">
-          <span class="quote-icon">🎯</span>${p.objectiveSentence}
-        </blockquote>
-  
-        <h4 class="section-title" style="color:${p.accent}">Objectifs métier clés</h4>
-        <ul class="list-disc ml-5 mb-6">${p.objectifs.map(o=>`<li>${o}</li>`).join("")}</ul>
-  
-        <h4 class="section-title" style="color:${p.accent}">Points de contact</h4>
-        <ul class="contact-list">
-          ${p.contacts.map(c=>`
-            <li class="contact-item">
-              <span class="contact-icon">${c.icon}</span>
-              <span>
-                <strong>${c.label}</strong><br>
-                <span class="contact-text">${c.text}</span>
-              </span>
-            </li>`).join("")}
-        </ul>
-      `;
+      <p class="mb-4">${p.desc}</p>
+    
+      <h4 class="section-title" style="color:${p.accent}">Objectifs métier clés</h4>
+      <ul class="list-disc ml-5 mb-6">${p.objectifs.map(o=>`<li>${o}</li>`).join("")}</ul>
+    
+      <h4 class="section-title" style="color:${p.accent}">Points de contact</h4>
+      <ul class="contact-list">
+        ${p.contacts.map(c=>`
+          <li class="contact-item">
+            <span class="contact-icon">${c.icon}</span>
+            <span>
+              <strong>${c.label}</strong><br>
+              <span class="contact-text">${c.text}</span>
+            </span>
+          </li>`).join("")}
+      </ul>
+    `;
   
       /* Reset évaluation */
       ratingButtons.forEach(b=>b.classList.remove("selected"));

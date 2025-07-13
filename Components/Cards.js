@@ -1,13 +1,12 @@
 // Components/Cards.js
 export function createAndAppendCards(phases) {
-    /* Conteneur des cartes */
     const container = document.getElementById("cardContainer");
     if (!container) return console.error("Container des cartes non trouvé.");
   
-    container.innerHTML = ""; // reset
+    container.innerHTML = "";
   
     phases.forEach((phase, idx) => {
-      /* Sécurisation : s'assurer que l’on a bien des tableaux */
+      /* Sécurisation des tableaux */
       const objectifs = Array.isArray(phase.objectifs)
         ? phase.objectifs
         : (phase.objectifs || "").split("<br>").map(t => t.trim()).filter(Boolean);
@@ -27,20 +26,11 @@ export function createAndAppendCards(phases) {
           <div class="phase-icon" style="color:${phase.accent}">${phase.ic}</div>
           <div class="phase-title">${phase.title}</div>
           <div class="phase-sub">${phase.sub}</div>
-        </div>
-  
-        <div class="phase-back">
-          <div class="section-title" style="color:${phase.accent}">🎯 Objectifs</div>
-          <ul>${objectifs.map(o => `<li>${o}</li>`).join("")}</ul>
-  
-          <div class="section-title" style="color:${phase.accent}">🧩 Points de contact</div>
-          <ul>${contacts.map(c =>
-            `<li>${typeof c === "string" ? c : c.label}</li>`
-          ).join("")}</ul>
+          <div class="business-goal italic text-sm mt-2 text-gray-600">« ${phase.objectiveSentence} »</div>
         </div>
       `;
   
-      /* Clic → dispatch custom event pour la modale */
+      /* Ouverture modale */
       card.addEventListener("click", () => {
         window.dispatchEvent(new CustomEvent("openModal", { detail: { idx } }));
       });

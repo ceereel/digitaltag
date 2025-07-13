@@ -12,7 +12,7 @@ export function getPhases() {
                culture et gouvernance) générant radars et scores afin de visualiser le
                positionnement digital de l’entreprise et initier le plan d’amélioration.`,
   
-        objectiveSentence: `« Je veux connaître mes forces et mes faiblesses digitales en 10 minutes. »`,
+        objectiveSentence: `Je veux connaître mes forces et mes faiblesses digitales en 10 minutes.`,
   
         objectifs: [
           "Se situer rapidement sur les 5 dimensions",
@@ -36,7 +36,7 @@ export function getPhases() {
         desc: `Compare vos scores à ceux d’entreprises anonymisées similaires et affiche
                des écarts prioritaires dans des tableaux de bord sectoriels exportables.`,
   
-        objectiveSentence: `« Je veux savoir où je me situe par rapport aux autres acteurs de mon secteur. »`,
+        objectiveSentence: `Je veux savoir où je me situe par rapport aux autres acteurs de mon secteur.`,
   
         objectifs: [
           "Comprendre sa position sectorielle",
@@ -59,7 +59,7 @@ export function getPhases() {
         desc: `Tableau interactif inspiré du Business Model Canvas, pré-rempli par le diagnostic
                puis enrichi en drag-and-drop pour construire la feuille de route cible.`,
   
-        objectiveSentence: `« Je veux prioriser nos actions et jalons dans un canevas visuel partagé. »`,
+        objectiveSentence: `Je veux prioriser nos actions et jalons dans un canevas visuel partagé.`,
   
         objectifs: [
           "Formaliser une feuille de route claire",
@@ -82,7 +82,7 @@ export function getPhases() {
         desc: `Agent conversationnel exploitant NLP & ML pour reformuler le diagnostic,
                suggérer des actions et détecter signaux faibles, avec apprentissage continu.`,
   
-        objectiveSentence: `« Je veux des recommandations précises et adaptées à notre contexte. »`,
+        objectiveSentence: `Je veux des recommandations précises et adaptées à notre contexte.`,
   
         objectifs: [
           "Traduire les données en actions concrètes",
@@ -105,7 +105,7 @@ export function getPhases() {
         desc: `Génère une synthèse visuelle et exportable du plan d’action, séquencée
                court / moyen / long terme, pour piloter et communiquer la transformation.`,
   
-        objectiveSentence: `« Je veux une roadmap claire à présenter et à suivre. »`,
+        objectiveSentence: `Je veux une roadmap claire à présenter et à suivre.`,
   
         objectifs: [
           "Compiler et partager la roadmap",
