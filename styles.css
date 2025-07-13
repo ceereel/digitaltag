@@ -1,87 +1,46 @@
-/* ---------- variables ---------- */
 :root{
+    --accent:#0077d2;
     --text:#1a1a1a;
     --text-body:#4b5563;
-    --bg:#fff;           /* fond page */
-    --card-w:270px;
-    --rad:12px;
-    --shadow:0 6px 22px -8px rgba(0,0,0,.16);
-  
-    /* accent dynamique : changé par JS selon la phase */
-    --accent:#0077d2;
-    --accent-bg:rgb(0 119 210 / .06);
+    --bg:#ffffff;
+    --card-w:260px;
+    --radius:12px;
+    --shadow:0 6px 22px -8px rgba(0,0,0,.12);
   }
-  
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text)}
   
-  /* ---------- cartes ---------- */
-  #cardContainer{
-    display:flex;flex-wrap:wrap;gap:1.7rem;
-    justify-content:center;padding:1.7rem 2rem;
-  }
+  .input{width:100%;margin-top:.25rem;padding:.55rem .75rem;border:1.5px solid #d1d5db;border-radius:8px;}
+  .input:focus{outline:none;border-color:var(--accent)}
   
-  .phase-card{
-    width:var(--card-w);background:#fff;border:2px solid var(--accent);
-    border-radius:var(--rad);box-shadow:var(--shadow);cursor:pointer;
-    transition:transform .28s;
-  }
+  .btn-primary{background:linear-gradient(90deg,#0090ff,#0073ce);color:#fff;font-weight:600;padding:.6rem 1.6rem;border-radius:.5rem;
+    transition:transform .25s,box-shadow .25s}
+  .btn-primary:hover{transform:translateY(-3px);box-shadow:0 6px 14px -4px rgba(0,115,206,.4)}
+  
+  #cardContainer{display:flex;flex-wrap:wrap;gap:1.5rem;justify-content:center;padding:1.6rem 2rem}
+  .phase-card{width:var(--card-w);background:#fff;border:2px solid var(--accent);border-radius:var(--radius);
+    box-shadow:var(--shadow);cursor:pointer;transition:transform .3s}
   .phase-card:hover{transform:translateY(-6px)}
+  .phase-header{text-align:center;padding:1.3rem}
+  .phase-icon{font-size:2.4rem;margin-bottom:.4rem}
+  .phase-title{font-weight:600}
+  .phase-sub{font-size:.85rem;color:var(--text-body)}
+  .business-goal{margin-top:.9rem;padding:.5rem .7rem;border-radius:8px;font-size:.8rem;font-weight:500;
+    background:var(--accent)15;color:var(--accent)}
   
-  .phase-header{padding:1.4rem;text-align:center}
-  .phase-icon{font-size:2.4rem;margin-bottom:.4rem;color:var(--accent)}
-  .phase-title{font-weight:600;font-size:1rem;margin-bottom:.2rem}
-  .phase-sub{font-size:.86rem;color:var(--text-body)}
-  
-  .business-goal{
-    margin-top:.9rem;padding:.5rem .7rem;border-radius:8px;
-    font-size:.8rem;font-weight:500;line-height:1.35;
-    background:var(--accent-bg);color:var(--accent);
-  }
-  
-  /* ---------- modale ---------- */
-  .modal{background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .25s}
+  .modal{transition:opacity .25s}
   .modal.show{opacity:1;pointer-events:auto}
+  .modal.hidden{opacity:0;pointer-events:none}
+  .modal-box{width:100%;max-width:680px;max-height:88vh;overflow-y:auto;background:#fff;border-left:8px solid var(--accent);
+    border-radius:16px;box-shadow:0 10px 28px -10px rgba(0,0,0,.25);padding:1.5rem;transform:translateY(1.2rem);opacity:0;
+    transition:transform .35s,opacity .35s}
+  .modal.show .modal-box{transform:translateY(0);opacity:1}
   
-  #modalBox{
-    width:100%;max-width:680px;max-height:86vh;overflow-y:auto;
-    background:#fff;border-left:8px solid var(--accent);border-radius:16px;
-    padding:1.5rem;transform:translateY(1.5rem);opacity:0;
-    transition:transform .35s ease,opacity .35s ease;
-  }
-  .modal.show #modalBox{transform:translateY(0);opacity:1}
+  .modal-body h4{font-size:1.15rem;font-weight:600;color:var(--accent);margin:.9rem 0 .4rem}
+  .modal-body ul{padding-left:1.2rem;margin:.3rem 0 1rem}
+  .modal-body li{margin-bottom:.35rem;font-size:.9rem}
   
-  .modal-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:1.2rem}
-  #closeBtn{font-size:1.8rem;line-height:1;color:#666;background:none;border:none;cursor:pointer}
-  #closeBtn:hover{color:#000}
-  
-  /* corps modale */
-  .modal-body{font-size:.94rem;color:var(--text-body);line-height:1.6}
-  .modal-body h4{font-size:1.15rem;font-weight:600;color:var(--accent);margin:.8rem 0 .4rem}
-  .modal-body ul{padding-left:1.2rem;margin:.6rem 0}
-  .modal-body li{margin-bottom:.35rem}
-  
-  /* évaluation */
-  .modal-rate{margin-top:1.8rem;text-align:center}
-  .modal-rate h3{font-weight:600;margin-bottom:.8rem}
-  .rate-buttons{display:flex;justify-content:center;gap:1.8rem;margin-bottom:1rem}
-  .rating-btn{font-size:2rem;border:none;background:none;cursor:pointer;transition:transform .2s}
+  .rating-btn{transition:transform .2s}
   .rating-btn:hover{transform:scale(1.2)}
-  .rating-btn.selected{border-radius:50%;padding:.2rem;background:var(--accent-bg);}
-  
-  #fb{width:100%;height:80px;padding:.5rem .8rem;border:1px solid #ddd;border-radius:8px;font-size:.9rem}
-  .btn-send{margin-top:.9rem;background:linear-gradient(90deg,#0090ff,#0073ce);color:#fff;
-    font-weight:600;border:none;border-radius:8px;padding:.55rem 1.6rem;
-    transition:transform .25s,box-shadow .25s;cursor:pointer}
-  .btn-send:hover{transform:translateY(-4px);box-shadow:0 6px 16px rgba(0,115,206,.45)}
-  .btn-send:active{transform:translateY(0);box-shadow:none}
-  
-  .msg-ok{font-size:.85rem;color:#2f855a;background:#f0fff4;padding:.4rem;border-radius:6px;margin-top:.7rem}
-  
-  /* responsive */
-  @media(max-width:768px){
-    #cardContainer{gap:1rem;padding:1rem}
-    .phase-card{width:100%;max-width:320px}
-    #modalBox{max-width:92vw;max-height:80vh;padding:1rem}
-  }
+  .rating-btn.selected{border:2px solid var(--accent);border-radius:50%;transform:scale(1.15)}
   
