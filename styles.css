@@ -1,153 +1,87 @@
-/* -------------------------------------------------
-   Design system
---------------------------------------------------*/
+/* ---------- variables ---------- */
 :root{
-    --accent       : #0077d2;          /* valeur par défaut – écrasée inline pour chaque carte */
-    --txt          : #111827;
-    --txt-muted    : #6b7280;
-    --bg           : #f3f4f6;
-    --radius       : 14px;
-    --card-w       : 280px;
-    --shadow-sm    : 0 2px 6px rgba(0,0,0,.05);
-    --shadow-md    : 0 8px 22px rgba(0,0,0,.08);
-    --transition   : .28s cubic-bezier(.25,.8,.5,1);
+    --text:#1a1a1a;
+    --text-body:#4b5563;
+    --bg:#fff;           /* fond page */
+    --card-w:270px;
+    --rad:12px;
+    --shadow:0 6px 22px -8px rgba(0,0,0,.16);
+  
+    /* accent dynamique : changé par JS selon la phase */
+    --accent:#0077d2;
+    --accent-bg:rgb(0 119 210 / .06);
   }
   
-  html{scroll-behavior:smooth}
-  body{
-    font-family:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
-    background:var(--bg);
-    color:var(--txt);
-    margin:0;
-  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text)}
   
-  /* -------------------------------------------------
-     Conteneur cartes (scroll horizontal)
-  --------------------------------------------------*/
+  /* ---------- cartes ---------- */
   #cardContainer{
-    display:flex;
-    gap:1.5rem;
-    padding:1.5rem 2rem;
-    overflow-x:auto;
-    scroll-snap-type:x proximity;
+    display:flex;flex-wrap:wrap;gap:1.7rem;
+    justify-content:center;padding:1.7rem 2rem;
   }
-  #cardContainer::-webkit-scrollbar{height:6px}
-  #cardContainer::-webkit-scrollbar-thumb{background:#c4c4c4;border-radius:3px}
   
-  /* -------------------------------------------------
-     Carte phase
-  --------------------------------------------------*/
   .phase-card{
-    scroll-snap-align:start;
-    background:#fff;
-    width:var(--card-w);
-    min-width:var(--card-w);
-    border:2px solid var(--accent);
-    border-radius:var(--radius);
-    box-shadow:var(--shadow-sm);
-    cursor:pointer;
-    transition:transform var(--transition), box-shadow var(--transition);
+    width:var(--card-w);background:#fff;border:2px solid var(--accent);
+    border-radius:var(--rad);box-shadow:var(--shadow);cursor:pointer;
+    transition:transform .28s;
   }
-  .phase-card:hover{
-    transform:translateY(-6px);
-    box-shadow:var(--shadow-md);
-  }
+  .phase-card:hover{transform:translateY(-6px)}
   
-  /* header */
-  .phase-header{
-    padding:1.4rem 1.2rem 1rem;
-    text-align:center;
-  }
-  .phase-icon{
-    font-size:2.25rem;
-    line-height:1;
-    margin-bottom:.35rem;
-  }
-  .phase-title{
-    font-weight:600;
-    font-size:1rem;
-  }
-  .phase-sub{
-    font-size:.85rem;
-    color:var(--txt-muted);
-  }
+  .phase-header{padding:1.4rem;text-align:center}
+  .phase-icon{font-size:2.4rem;margin-bottom:.4rem;color:var(--accent)}
+  .phase-title{font-weight:600;font-size:1rem;margin-bottom:.2rem}
+  .phase-sub{font-size:.86rem;color:var(--text-body)}
   
-  /* business goal badge */
   .business-goal{
-    display:inline-block;
-    margin-top:.85rem;
-    padding:.5rem .9rem;
-    font-size:.86rem;
-    font-weight:500;
-    font-style:italic;
-    border-radius:1.25rem;
-    background:var(--accent);
-    color:#fff;
-    transition:background .25s ease,color .25s ease;
-  }
-  .phase-card:hover .business-goal{
-    filter:brightness(1.05);
+    margin-top:.9rem;padding:.5rem .7rem;border-radius:8px;
+    font-size:.8rem;font-weight:500;line-height:1.35;
+    background:var(--accent-bg);color:var(--accent);
   }
   
-  /* -------------------------------------------------
-     Modal
-  --------------------------------------------------*/
-  .modal{
-    opacity:0;
-    pointer-events:none;
-    transition:opacity .25s ease-out;
-  }
-  .modal.show{
-    opacity:1;
-    pointer-events:auto;
-    transition:opacity .5s ease-in;
-  }
-  /* “pop” du panneau interne */
-  @keyframes popup{
-    from{transform:translateY(25px) scale(.96);opacity:.6}
-    to  {transform:translateY(0)    scale(1);  opacity:1}
-  }
+  /* ---------- modale ---------- */
+  .modal{background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .25s}
+  .modal.show{opacity:1;pointer-events:auto}
+  
   #modalBox{
-    background:#fff;
-    border-radius:var(--radius);
-    box-shadow:var(--shadow-md);
+    width:100%;max-width:680px;max-height:86vh;overflow-y:auto;
+    background:#fff;border-left:8px solid var(--accent);border-radius:16px;
+    padding:1.5rem;transform:translateY(1.5rem);opacity:0;
+    transition:transform .35s ease,opacity .35s ease;
   }
-  .modal.show #modalBox{ /* déclenche l’anim */
-    animation:popup .45s cubic-bezier(.2,.8,.4,1);
-  }
+  .modal.show #modalBox{transform:translateY(0);opacity:1}
   
-  /* Rating emojis */
-  .rating-btn{
-    transition:transform .2s;
-  }
-  .rating-btn:hover{transform:scale(1.1)}
-  .rating-btn.selected{
-    border:3px solid var(--accent);
-    border-radius:50%;
-    background:rgba(0,119,210,.12);
-    transform:scale(1.12);
-  }
+  .modal-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:1.2rem}
+  #closeBtn{font-size:1.8rem;line-height:1;color:#666;background:none;border:none;cursor:pointer}
+  #closeBtn:hover{color:#000}
   
-  /* Bouton envoyer moderne */
-  .btn-send{
-    background:linear-gradient(92deg,#0090ff 0%,#0068c9 100%);
-    color:#fff;
-    padding:.6rem 1.7rem;
-    font-weight:600;
-    border-radius:var(--radius);
-    box-shadow:0 6px 14px -4px rgba(0,105,200,.35);
-    transition:transform .22s ease,box-shadow .22s ease;
-  }
-  .btn-send:hover{
-    transform:translateY(-3px);
-    box-shadow:0 10px 22px -6px rgba(0,105,200,.4);
-  }
+  /* corps modale */
+  .modal-body{font-size:.94rem;color:var(--text-body);line-height:1.6}
+  .modal-body h4{font-size:1.15rem;font-weight:600;color:var(--accent);margin:.8rem 0 .4rem}
+  .modal-body ul{padding-left:1.2rem;margin:.6rem 0}
+  .modal-body li{margin-bottom:.35rem}
+  
+  /* évaluation */
+  .modal-rate{margin-top:1.8rem;text-align:center}
+  .modal-rate h3{font-weight:600;margin-bottom:.8rem}
+  .rate-buttons{display:flex;justify-content:center;gap:1.8rem;margin-bottom:1rem}
+  .rating-btn{font-size:2rem;border:none;background:none;cursor:pointer;transition:transform .2s}
+  .rating-btn:hover{transform:scale(1.2)}
+  .rating-btn.selected{border-radius:50%;padding:.2rem;background:var(--accent-bg);}
+  
+  #fb{width:100%;height:80px;padding:.5rem .8rem;border:1px solid #ddd;border-radius:8px;font-size:.9rem}
+  .btn-send{margin-top:.9rem;background:linear-gradient(90deg,#0090ff,#0073ce);color:#fff;
+    font-weight:600;border:none;border-radius:8px;padding:.55rem 1.6rem;
+    transition:transform .25s,box-shadow .25s;cursor:pointer}
+  .btn-send:hover{transform:translateY(-4px);box-shadow:0 6px 16px rgba(0,115,206,.45)}
   .btn-send:active{transform:translateY(0);box-shadow:none}
   
-  /* Responsive */
+  .msg-ok{font-size:.85rem;color:#2f855a;background:#f0fff4;padding:.4rem;border-radius:6px;margin-top:.7rem}
+  
+  /* responsive */
   @media(max-width:768px){
-    :root{--card-w:220px}
-    .phase-icon{font-size:1.9rem}
-    .business-goal{font-size:.8rem;padding:.4rem .8rem}
+    #cardContainer{gap:1rem;padding:1rem}
+    .phase-card{width:100%;max-width:320px}
+    #modalBox{max-width:92vw;max-height:80vh;padding:1rem}
   }
   
