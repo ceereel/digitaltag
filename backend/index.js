@@ -1,38 +1,62 @@
-import express from "express";
-import cors from "cors";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+// ────────────────────────────────────────────────────────────────
+//  Feedback API – Digital TAG
+//  → accepte le front de production ET le front local (127.0.0.1)
+// ────────────────────────────────────────────────────────────────
+import express from 'express';
+import cors     from 'cors';
+import fs       from 'fs';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-const app  = express();
 const PORT = process.env.PORT || 4000;
+const app   = express();
 
-/* Autorise ton front Render uniquement */
-app.use(cors({ origin: "https://digitaltag.onrender.com" }));
+/* ------------------------------------------------------------------
+   CORS : liste blanche dynamique
+   ------------------------------------------------------------------ */
+const whitelist = [
+  'https://digitaltag.onrender.com', // front déployé
+  'http://127.0.0.1:5500',           // dev local (Live Server, Vite…)
+  'http://localhost:5500'            // alternative localhost
+];
+
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      // origin === undefined → requête Postman/cURL : on accepte
+      if (!origin || whitelist.includes(origin)) return cb(null, true);
+      cb(new Error('Not allowed by CORS: ' + origin));
+    }
+  })
+);
+
+/* ------------------------------------------------------------------
+   Middleware
+   ------------------------------------------------------------------ */
 app.use(express.json());
 
-/* POST /feedback ---------------------------------------------------- */
-app.post("/feedback", (req, res) => {
-  const d   = req.body;                                  // {org, sect, mail, module, rating, comment}
-  if (!d?.org || !d?.mail || !d?.module || !d?.rating)
-    return res.status(400).json({ error: "payload incomplet" });
-
+/* ------------------------------------------------------------------
+   Routes
+   ------------------------------------------------------------------ */
+app.post('/feedback', (req, res) => {
+  const { org, module, rating, comment = '—' } = req.body;
   const now  = new Date().toISOString();
-  const line = `[${now}] ${d.org} | ${d.module} | ${d.rating} | ${d.comment || "—"}\n`;
-  fs.appendFile(path.join(__dirname, "feedback.log"), line, err => {
-    if (err) return res.status(500).json({ error: "write error" });
+  const line = `[${now}] ${org} | ${module} | ${rating} | ${comment}\n`;
+
+  fs.appendFile('feedback.log', line, err => {
+    if (err) return res.status(500).send("Erreur d'enregistrement");
     res.sendStatus(200);
   });
 });
 
-/* GET /admin/feedback ---------------------------------------------- */
-app.get("/admin/feedback", (req, res) => {
-  fs.readFile(path.join(__dirname, "feedback.log"), "utf8", (err, txt) => {
-    if (err) return res.status(500).json({ error: "read error" });
-    res.type("text/plain").send(txt);
+app.get('/admin/feedback', (req, res) => {
+  fs.readFile('feedback.log', 'utf8', (err, content) => {
+    if (err) return res.status(500).send("Erreur de lecture");
+    res.type('text/plain').send(content);
   });
 });
 
-app.listen(PORT, () => console.log("Feedback API running →", PORT));
+/* ------------------------------------------------------------------
+   Lancement
+   ------------------------------------------------------------------ */
+app.listen(PORT, () => {
+  console.log(`✅ Feedback API running on port ${PORT}`);
+});
