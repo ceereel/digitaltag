@@ -2,8 +2,7 @@
    MODAL : ouverture, affichage du contenu, gestion de l’évaluation
    ------------------------------------------------------------------ */
    import { getUser } from "../Components/Auth.js";
-   import { sendEvaluation } from '../Services/ApiService.js';
-
+   const API = 'https://user-journey-backend.onrender.com/feedback';
 
    /**
     * Initialise la logique modale et enregistre tous les écouteurs.
