@@ -1,46 +1,40 @@
 // Components/Cards.js
 
 export function createAndAppendCards(phases) {
-    const wheel = document.getElementById("wheel");
-    if (!wheel || !phases) return;
+    const container = document.getElementById("cardContainer");
+    container.innerHTML = ""; // Nettoyer les anciennes cartes si besoin
   
-    wheel.innerHTML = ""; // Nettoyage
-  
-    // Conteneur horizontal scrollable
-    wheel.className = "flex overflow-x-auto space-x-6 px-4 py-4 snap-x";
-    wheel.style.scrollSnapType = "x mandatory";
-  
-    phases.forEach((p, i) => {
+    phases.forEach((phase, idx) => {
       const card = document.createElement("div");
-      card.className = "card group snap-start flex-shrink-0 w-72 p-4 rounded-xl shadow-md transition-transform duration-300 bg-white hover:shadow-lg";
-      card.style.borderLeft = `6px solid ${p.accent}`;
-  
+      card.className = "flex-shrink-0 w-72 sm:w-80 bg-white shadow-lg rounded-xl border-l-8 overflow-hidden";
+      card.style.borderLeftColor = phase.accent;
       card.innerHTML = `
-        <div class="flex items-center mb-2">
-          <div class="text-2xl mr-3">${p.ic}</div>
-          <div>
-            <div class="font-semibold text-sm text-gray-700">Phase ${i + 1}</div>
-            <div class="text-xs text-gray-500">${p.sub}</div>
+        <div class="p-5">
+          <div class="text-3xl mb-2">${phase.ic}</div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-1">${phase.title}</h3>
+          <p class="text-sm text-gray-500 mb-4">${phase.sub}</p>
+          <div class="text-sm text-gray-700 mb-2">
+            <h4 class="font-semibold mb-1">🎯 Objectifs :</h4>
+            <ul class="list-disc list-inside space-y-1">
+              ${phase.objectifs.split("<br>").map(line => `<li>${line.trim()}</li>`).join("")}
+            </ul>
           </div>
-        </div>
-        <div class="text-xs text-gray-600 mb-2">
-          <span class="font-semibold text-gray-700">🎯 Objectifs :</span>
-          <ul class="list-disc list-inside mt-1">
-            ${p.objectifs.split("<br>").map(line => `<li>${line.trim()}</li>`).join("")}
-          </ul>
-        </div>
-        <div class="text-xs text-gray-600 mb-4">
-          <span class="font-semibold text-gray-700">🧩 Points de contact :</span>
-          <ul class="list-disc list-inside mt-1">
-            ${p.contact.split("<br>").map(line => `<li>${line.trim()}</li>`).join("")}
-          </ul>
-        </div>
-        <div class="text-right">
-          <button data-idx="${i}" class="details-btn text-sm font-semibold text-white px-3 py-1 rounded bg-[${p.accent}] hover:bg-opacity-90 transition">Détails</button>
+          <div class="text-sm text-gray-700 mb-4">
+            <h4 class="font-semibold mb-1">🧩 Points de contact :</h4>
+            <ul class="list-disc list-inside space-y-1">
+              ${phase.contact.split("<br>").map(line => `<li>${line.trim()}</li>`).join("")}
+            </ul>
+          </div>
+          <div class="text-center">
+            <button class="details-btn px-4 py-2 mt-2 rounded bg-[${phase.accent}] text-white font-semibold text-sm hover:opacity-90 transition"
+                    data-idx="${idx}">
+              ➕ Détails
+            </button>
+          </div>
         </div>
       `;
   
-      wheel.appendChild(card);
+      container.appendChild(card);
     });
   }
   

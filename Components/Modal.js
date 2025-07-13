@@ -81,7 +81,7 @@ export function setupModal(phases) {
       setTimeout(() => msg.classList.add("hidden"), 2000);
     };
   
-    // Écouteur global sur bouton Détails
+    // Activation via bouton "Détails"
     document.addEventListener("click", e => {
       const btn = e.target.closest(".details-btn");
       if (btn) {

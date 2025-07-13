@@ -1,20 +1,22 @@
 // Services/AnimationServices.js
 
 export function animatePhaseIndicator(phases) {
-    const dots = [...document.querySelectorAll('.timeline-dot')];
-    const icons = phases.map(p => p.ic);
-    const currIcon = document.getElementById('currIcon');
-    const currText = document.getElementById('currText');
+    const dots = [...document.querySelectorAll(".indicator-dot")];
+    const icon = document.getElementById("currIcon");
+    const text = document.getElementById("currText");
   
-    function stepThrough(i = 0) {
-      dots.forEach(d => d.classList.remove('active'));
-      dots[i].classList.add('active');
-      currIcon.textContent = icons[i];
-      currText.textContent = `Phase ${i + 1}`;
-      if (i + 1 < phases.length) {
-        setTimeout(() => stepThrough(i + 1), 1200);
-      }
-    }
+    if (!dots.length || !icon || !text) return;
+  
+    dots.forEach(dot => dot.classList.remove("bg-[var(--accent)]"));
+  
+    let index = 0;
+    const stepThrough = () => {
+      dots.forEach(dot => dot.classList.remove("bg-[var(--accent)]"));
+      dots[index].classList.add("bg-[var(--accent)]");
+      icon.textContent = phases[index].ic;
+      text.textContent = `Phase ${index + 1}`;
+      index = (index + 1) % phases.length;
+    };
   
     stepThrough();
     setInterval(stepThrough, 15000);
