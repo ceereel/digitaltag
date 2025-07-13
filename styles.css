@@ -162,5 +162,24 @@
         font-size:1.35rem;line-height:1;margin-top:.1rem
       }
       .contact-text{color:var(--text-sub);font-size:.85rem}
+
+      /* Badge Business Goal sur la face avant de la carte */
+.business-goal {
+    font-size: 0.9rem;
+    font-style: italic;
+    font-weight: 500;
+    padding: .35rem .75rem;
+    border-radius: .75rem;
+    line-height: 1.35;
+    display: inline-block;
+    margin-top: .75rem;
+    transition: background-color .25s ease, color .25s ease;
+  }
+  
+  /* Effet au survol (facultatif) : inversion teinte/texte */
+  .phase-card:hover .business-goal {
+    background-color: var(--accent);
+    color: #fff;
+  }
   }
   
