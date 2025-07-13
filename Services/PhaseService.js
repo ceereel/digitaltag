@@ -1,134 +1,90 @@
-// Services/PhaseService.js
 export function getPhases() {
     return [
-      /* ---------- Phase 1 ---------- */
       {
-        ic: "🧭",
-        accent: "#0077D2",
-        title:  "Phase 1 • Diagnostic",
-        sub:    "Auto-diagnostic",
-        objectiveSentence: "Je dois connaître ma maturité digitale avant d’agir.",
-        /* Nouveau : contexte + module */
-        context: `Toute transformation débute par une photographie précise de la
-                  maturité numérique de l’entreprise afin d’objectiver les forces
-                  et les faiblesses sur les dimensions clés.`,
-        module : `Le module “Auto-diagnostic” s’appuie sur un questionnaire couvrant
-                  stratégie, processus, technologie, culture et gouvernance.
-                  Les réponses alimentent automatiquement des radars, scores
-                  et matrices synthétiques pour visualiser votre positionnement.`,
-        objectifs: [
-          "Se situer rapidement sur les 5 dimensions",
-          "Identifier forces / faiblesses sans jargon",
-          "Obtenir un score pour mobiliser"
+        ic:"🧭",accent:"#0077d2",
+        phaseLabel:"Diagnostic",
+        moduleLabel:"Auto-diagnostic de maturité digitale",
+        objectiveSentence:"« Je veux une vision claire de ma maturité digitale »",
+        phaseExplain:"Première étape de tout parcours de transformation : obtenir une vision factuelle de votre maturité digitale. L’entreprise collecte des informations (questionnaires, interviews, audits internes) pour distinguer ses forces, ses faiblesses et ses priorités potentielles. L’objectif n’est pas encore d’agir, mais de poser un diagnostic partagé qui servira de référence tout au long du cycle.",
+        moduleExplain:"Point d’entrée idéal, l'outil d'auto-diagnostic mesure votre maturité sur cinq axes : stratégie, processus, technologie, culture digitale et gouvernance. En moins de 15 minutes, un questionnaire guidé génère radars et scores chiffrés qui matérialisent vos points forts et zones de progrès. Vous obtenez ainsi une base claire pour décider où concentrer vos efforts.",
+        features:[
+          "Questionnaire structuré sur 5 dimensions",
+          "Indicateurs visuels : diagrammes radar, scores numériquess",
+          "Matrices synthétiques de positionnement",
+          "Base d'analyse pour la stratégie digitale"
         ],
-        contacts: [
-          "Questionnaire interactif mobile-first",
-          "Radar & scores dynamiques",
-          "Tooltip d’aide • Export PDF"
+        contacts:[
+          {icon:"📋",label:"Formulaire guidé"},
+          {icon:"🖼️",label:"Vue radar"}
         ]
       },
-  
-      /* ---------- Phase 2 ---------- */
       {
-        ic: "📊",
-        accent: "#27AE60",
-        title:  "Phase 2 • Benchmark",
-        sub:    "Comparaison sectorielle",
-        objectiveSentence: "Je veux me situer face à mes pairs du secteur.",
-        context: `Après le diagnostic, il est crucial de se comparer à des
-                  organisations similaires pour hiérarchiser les priorités
-                  et convaincre les parties prenantes.`,
-        module : `L’“Observatoire” Digital TAG interroge une base de cas
-                  anonymisés ; filtres (taille, secteur, maturité) et dashboards
-                  dynamiques mettent en évidence vos écarts et bonnes pratiques.
-                  Les données sont exportables via API ou PPT.`,
-        objectifs: [
-          "Comprendre sa position sectorielle",
-          "Détecter les écarts prioritaires",
-          "Justifier des choix auprès du COMEX"
+        ic:"📊",accent:"#27AE60",
+        phaseLabel:"Positionnement sectoriel",
+        moduleLabel:"Observatoire",
+        objectiveSentence:"« Je veux me situer par rapport à mes pairs et à mon secteur »",
+        phaseExplain:"Une fois la photographie interne établie, il est essentiel de se situer par rapport au marché et à ses pairs. Cette phase confronte vos indicateurs à ceux d’organisations similaires : mêmes secteurs d’activité, mêmes tailles ou niveaux de maturité. Elle permet de repérer les écarts compétitifs (avances ou retards) et de déterminer les domaines où l’investissement créera le plus d’impact.",
+        moduleExplain:"L’observatoire vous situe par rapport à des organisations anonymisées partageant votre secteur, votre taille ou votre profil de maturité. Des tableaux de bord filtrables mettent en évidence les écarts majeurs : vous voyez immédiatement où vous sur- ou sous-performez et disposez d’exports prêts à convaincre votre comité de direction.",
+        features:[
+          "Dashboards filtrables",
+          "Comparaisons représentatives",
+          "Export PPT/API"
         ],
-        contacts: [
-          "Dashboards filtrables en temps réel",
-          "Benchmarks anonymisés",
-          "API / Export PPT"
+        contacts:[
+          {icon:"📈",label:"Dashboards"},
+          {icon:"🗂️",label:"Filtres avancés"},
+          {icon:"🔗",label:"API export"}
         ]
       },
-  
-      /* ---------- Phase 3 ---------- */
       {
-        ic: "🧩",
-        accent: "#8E44AD",
-        title:  "Phase 3 • Structuration",
-        sub:    "Canevas interactif",
-        objectiveSentence: "Je dois traduire mes priorités en feuille de route claire.",
-        context: `Les enseignements précédents doivent se transformer en trajectoire
-                  opérationnelle : objectifs, actions, jalons et KPIs alignés
-                  avec toutes les équipes.`,
-        module : `Le “Canevas de transformation” est un tableau drag-and-drop
-                  inspiré du Business Model Canvas ; pré-rempli par vos résultats,
-                  il se complète en atelier (multi-curseur) et reste évolutif
-                  pour une planification agile.`,
-        objectifs: [
-          "Formaliser une feuille de route claire",
-          "Aligner métiers, IT et direction",
-          "Prioriser actions & jalons"
+        ic:"🧩",accent:"#8E44AD",
+        phaseLabel:"Structuration",
+        moduleLabel:"Canevas de transformation",
+        objectiveSentence:"« Je veux visualiser la trajectoire de l'entreprise »",
+        phaseExplain:"Avec les constats des phases 1 et 2, l’entreprise formalise une feuille de route cohérente. Objectifs, actions, jalons, responsables et indicateurs sont alignés dans un canevas unique pour éviter les silos. C’est la phase où l’on priorise : Quels projets lancer d’abord ? Quelles ressources mobiliser ? Quelle séquence suivre pour générer des gains rapides tout en préparant le long terme.",
+        moduleExplain:"Transformer l’analyse en plan d’action exige une vue synthétique. Le canevas interactif, inspiré du Business Model Canvas, se pré-remplit de vos résultats puis vous permet, en drag-and-drop, de formaliser objectifs, jalons, indicateurs et responsables. Utilisable en solo ou en atelier collaboratif, il devient votre fil conducteur pour prioriser et aligner toutes les parties prenantes.",
+        features:[
+          "Drag-and-drop intuitif",
+          "Co-édition temps réel",
         ],
-        contacts: [
-          "Canvas drag-and-drop",
-          "Co-édition en temps réel",
-          "Notifications de validation"
+        contacts:[
+          {icon:"🗺️",label:"Vue canevas"},
+          {icon:"🤝",label:"Atelier collaboratif"},
         ]
       },
-  
-      /* ---------- Phase 4 ---------- */
       {
-        ic: "🤖",
-        accent: "#FF884D",
-        title:  "Phase 4 • IA",
-        sub:    "Accompagnement intelligent",
-        objectiveSentence: "Je veux des recommandations personnalisées en continu.",
-        context: `Au fur et à mesure de l’exécution, l’entreprise a besoin de
-                  conseils contextualisés et d’une veille proactive pour sécuriser
-                  sa trajectoire.`,
-        module : `L’agent conversationnel Digital TAG, basé NLP/ML, reformule les
-                  résultats, détecte signaux faibles et propose actions ou
-                  formations adaptées. Disponible via chat, notifications push
-                  ou mail.`,
-        objectifs: [
-          "Traduire données en actions concrètes",
-          "Recevoir recommandations personnalisées",
-          "Repérer incohérences / risques tôt"
+        ic:"🤖",accent:"#FF884D",
+        phaseLabel:"Accompagnement ponctuel",
+        moduleLabel:"Agent conversationnel intelligent et conseils personnalisés",
+        objectiveSentence:"« Je veux des recommandations immédiates et contextualisées »",
+        phaseExplain:"Même le meilleur plan doit évoluer. Cette phase introduit l’apprentissage en cours d’exécution : coaching, outils d’IA, retours d’expérience et monitoring régulier pour ajuster vos actions. Les décisions deviennent plus rapides, l’équipe gagne en autonomie et la transformation s’inscrit dans une boucle d’amélioration permanente plutôt qu’un projet ponctuel.",
+        moduleExplain:"Besoin d’un conseil instantané ? L’agent virtuel contextualise vos données, reformule les diagnostics en langage clair et propose des actions concrètes : formations, quick-wins, projets structurants. Grâce au NLP et au machine-learning, il apprend de vos interactions, détecte signaux faibles ou incohérences et pousse des recommandations toujours plus pertinentes En outre, il est possible d'activer l'agent durant vos réunions stratégiques. Ce dernier écoutera vos échanges et vous proposera des recommandations en temps réel, enrichissant ainsi votre canevas de transformation digitale.",
+        features:[
+          "Ecoute attive des échanges en réunion",
+          "Recommandations ciblées et issues de la littérature scientifique",
         ],
-        contacts: [
-          "Chat GPT-like intégré",
-          "Suggestions push & mail",
-          "Dashboard signaux faibles"
+        contacts:[
+          {icon:"💬",label:"Chat IA"},
+          {icon:"🔊",label:"Ecoute active et retranscription des points stratégiques dans le canevas"},
         ]
       },
-  
-      /* ---------- Phase 5 ---------- */
       {
-        ic: "📍",
-        accent: "#E74C3C",
-        title:  "Phase 5 • Roadmap",
-        sub:    "Formalisation",
-        objectiveSentence: "Je dois partager la roadmap et piloter l’exécution.",
-        context: `Pour embarquer les parties prenantes et suivre l’avancement, la
-                  feuille de route doit être synthétique, visuelle et exportable.`,
-        module : `Le module “Feuille de route” génère automatiquement une timeline
-                  court / moyen / long terme, un portefeuille projets et des
-                  exports PDF, Excel ou API pour le reporting.`,
-        objectifs: [
-          "Compiler & partager la roadmap",
-          "Sécuriser budgets / ressources",
-          "Piloter l’exécution"
+        ic:"📍",accent:"#E74C3C",
+        phaseLabel:"Formalisation",
+        moduleLabel:"Feuille de route",
+        objectiveSentence:"« Je veux piloter mon plan d’action »",
+        phaseExplain:"Enfin, les actions structurées sont regroupées dans une feuille de route opérationnelle : jalons temporels, budgets, indicateurs de succès et reporting. Cette formalisation facilite la communication avec la direction, les partenaires ou les investisseurs, tout en offrant un tableau de bord pour suivre l’exécution et réinjecter les apprentissages dans un nouveau cycle (retour en Phase 1).",
+        moduleExplain:"À partir du canevas, le module « Feuille de route » génère une timeline court / moyen / long terme et une vue portefeuille projet. Les exports PDF, Excel ou API facilitent le reporting, tandis que les indicateurs temps réel assurent un pilotage continu — transformant la stratégie en exécution mesurable.",
+        features:[
+          "Timeline interactive",
+          "Export PDF/Excel/API",
+          "Portefeuille KPIs live"
         ],
-        contacts: [
-          "Timeline visuelle",
-          "Exports multiples",
-          "Vue portefeuille + indicateurs"
+        contacts:[
+          {icon:"🗓️",label:"Timeline"},
+          {icon:"📤",label:"Exports"},
+          {icon:"📊",label:"Suivi KPIs"}
         ]
       }
     ];
   }
-  
