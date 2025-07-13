@@ -1,185 +1,153 @@
-/**************************************
- *  PME Journey Map – styles.css (v2)  *
- *************************************/
-
-/* ---------- Variables globales ---------- */
+/* -------------------------------------------------
+   Design system
+--------------------------------------------------*/
 :root{
-    --accent      : #0077d2;           /* écrasé dynamiquement côté JS pour la modale */
-    --bg          : #f6f7fa;
-    --surface     : #ffffff;
-    --text        : #111827;           /* gris presque noir */
-    --text-sub    : #6b7280;           /* gris secondaire */
-    --radius      : 14px;
-    --shadow      : 0 10px 30px -12px rgba(0,0,0,.15);
-    --card-width  : 270px;
-    --transition  : .35s cubic-bezier(.25,.8,.5,1);
+    --accent       : #0077d2;          /* valeur par défaut – écrasée inline pour chaque carte */
+    --txt          : #111827;
+    --txt-muted    : #6b7280;
+    --bg           : #f3f4f6;
+    --radius       : 14px;
+    --card-w       : 280px;
+    --shadow-sm    : 0 2px 6px rgba(0,0,0,.05);
+    --shadow-md    : 0 8px 22px rgba(0,0,0,.08);
+    --transition   : .28s cubic-bezier(.25,.8,.5,1);
   }
   
-  /* ---------- Base ---------- */
-  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
   body{
-    margin:0;
-    font-family:'Inter',sans-serif;
+    font-family:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
     background:var(--bg);
-    color:var(--text);
-    -webkit-font-smoothing:antialiased;
+    color:var(--txt);
+    margin:0;
   }
-  h1,h2,h3,h4,h5{margin:0;font-weight:600}
   
-  /* Scrollbar discrète (Chrome/Edge) */
-  ::-webkit-scrollbar{height:8px;width:8px}
-  ::-webkit-scrollbar-thumb{background:#c4c4c4;border-radius:4px}
-  ::-webkit-scrollbar-thumb:hover{background:#9ca3af}
-  ::-webkit-scrollbar-track{background:transparent}
-  
-  /* ---------- Cartes ---------- */
+  /* -------------------------------------------------
+     Conteneur cartes (scroll horizontal)
+  --------------------------------------------------*/
   #cardContainer{
     display:flex;
-    gap:1.75rem;
-    padding:2rem 3rem;
+    gap:1.5rem;
+    padding:1.5rem 2rem;
     overflow-x:auto;
-    scroll-snap-type:x mandatory;
+    scroll-snap-type:x proximity;
   }
+  #cardContainer::-webkit-scrollbar{height:6px}
+  #cardContainer::-webkit-scrollbar-thumb{background:#c4c4c4;border-radius:3px}
+  
+  /* -------------------------------------------------
+     Carte phase
+  --------------------------------------------------*/
   .phase-card{
     scroll-snap-align:start;
-    flex:0 0 auto;
-    min-width:var(--card-width);
-    max-width:var(--card-width);
-    background:var(--surface);
+    background:#fff;
+    width:var(--card-w);
+    min-width:var(--card-w);
     border:2px solid var(--accent);
     border-radius:var(--radius);
-    box-shadow:var(--shadow);
-    transition:var(--transition);
+    box-shadow:var(--shadow-sm);
     cursor:pointer;
-    position:relative;
-    overflow:hidden;
+    transition:transform var(--transition), box-shadow var(--transition);
   }
-  .phase-card::after{         /* halo subtil à l’hover */
-    content:"";
-    position:absolute;inset:0;
-    background:var(--accent);
-    opacity:0;
-    transition:opacity .4s;
+  .phase-card:hover{
+    transform:translateY(-6px);
+    box-shadow:var(--shadow-md);
   }
-  .phase-card:hover{transform:translateY(-8px)}
-  .phase-card:hover::after{opacity:.06}
   
-  /* Contenu carte */
+  /* header */
   .phase-header{
-    padding:1.5rem 1.25rem 1.25rem;
+    padding:1.4rem 1.2rem 1rem;
     text-align:center;
   }
-  .phase-icon{font-size:2.4rem;margin-bottom:.4rem;line-height:1}
-  .phase-title{font-size:1.05rem;font-weight:600;margin-bottom:.2rem}
-  .phase-sub{font-size:.86rem;color:var(--text-sub)}
-  .phase-back{
-    background:#f3f4f6;
-    padding:1.1rem 1.25rem 1.4rem;
-    font-size:.83rem;
-    color:var(--text-sub);
+  .phase-icon{
+    font-size:2.25rem;
+    line-height:1;
+    margin-bottom:.35rem;
   }
-  .section-title{
+  .phase-title{
     font-weight:600;
-    margin:.75rem 0 .4rem;
-    font-size:.88rem;
+    font-size:1rem;
   }
-  .phase-back ul{margin:0;padding-left:1.1rem;list-style:disc}
-  .phase-back li{margin-bottom:.25rem}
+  .phase-sub{
+    font-size:.85rem;
+    color:var(--txt-muted);
+  }
   
-  /* ---------- Modale ---------- */
+  /* business goal badge */
+  .business-goal{
+    display:inline-block;
+    margin-top:.85rem;
+    padding:.5rem .9rem;
+    font-size:.86rem;
+    font-weight:500;
+    font-style:italic;
+    border-radius:1.25rem;
+    background:var(--accent);
+    color:#fff;
+    transition:background .25s ease,color .25s ease;
+  }
+  .phase-card:hover .business-goal{
+    filter:brightness(1.05);
+  }
+  
+  /* -------------------------------------------------
+     Modal
+  --------------------------------------------------*/
   .modal{
     opacity:0;
     pointer-events:none;
     transition:opacity .25s ease-out;
   }
-  .modal.show{opacity:1;pointer-events:auto;transition:opacity .5s ease-in}
+  .modal.show{
+    opacity:1;
+    pointer-events:auto;
+    transition:opacity .5s ease-in;
+  }
+  /* “pop” du panneau interne */
+  @keyframes popup{
+    from{transform:translateY(25px) scale(.96);opacity:.6}
+    to  {transform:translateY(0)    scale(1);  opacity:1}
+  }
   #modalBox{
-    transform:translateY(-18px) scale(.96);
-    transition:transform .4s cubic-bezier(.22,1,.36,1);
+    background:#fff;
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-md);
   }
-  .modal.show #modalBox{transform:none}
-  
-  /* Bouton X */
-  #closeBtn{line-height:1;transition:transform .25s}
-  #closeBtn:hover{transform:rotate(90deg)}
-  
-  /* Bouton envoyer */
-  .btn-send{
-    background:linear-gradient(90deg,#0090ff,#0073ce);
-    color:#fff;font-weight:600;
-    padding:.6rem 1.8rem;border:none;
-    border-radius:8px;
-    box-shadow:0 8px 22px -6px rgba(0,115,206,.45);
-    transition:transform .28s cubic-bezier(.25,.8,.5,1),box-shadow .28s;
+  .modal.show #modalBox{ /* déclenche l’anim */
+    animation:popup .45s cubic-bezier(.2,.8,.4,1);
   }
-  .btn-send:hover{transform:translateY(-4px)}
-  .btn-send:active{transform:translateY(0);box-shadow:none}
   
   /* Rating emojis */
   .rating-btn{
-    border:2px solid transparent;border-radius:50%;
-    padding:.35rem;transition:transform .25s,border-color .25s,background .25s;
-    line-height:1;
+    transition:transform .2s;
   }
-  .rating-btn:hover{transform:scale(1.12)}
+  .rating-btn:hover{transform:scale(1.1)}
   .rating-btn.selected{
-    border-color:var(--accent);
+    border:3px solid var(--accent);
+    border-radius:50%;
     background:rgba(0,119,210,.12);
-    transform:scale(1.15);
+    transform:scale(1.12);
   }
   
-  /* ---------- Responsiveness ---------- */
-  @media(max-width:1024px){
-    :root{--card-width:240px}
+  /* Bouton envoyer moderne */
+  .btn-send{
+    background:linear-gradient(92deg,#0090ff 0%,#0068c9 100%);
+    color:#fff;
+    padding:.6rem 1.7rem;
+    font-weight:600;
+    border-radius:var(--radius);
+    box-shadow:0 6px 14px -4px rgba(0,105,200,.35);
+    transition:transform .22s ease,box-shadow .22s ease;
   }
+  .btn-send:hover{
+    transform:translateY(-3px);
+    box-shadow:0 10px 22px -6px rgba(0,105,200,.4);
+  }
+  .btn-send:active{transform:translateY(0);box-shadow:none}
+  
+  /* Responsive */
   @media(max-width:768px){
-    #cardContainer{gap:1.1rem;padding:1.5rem}
-    :root{--card-width:220px}
-  }
-  @media(max-width:540px){
-    header h1{font-size:1.25rem}
-    #cardContainer{padding:1rem .8rem}
-    :root{--card-width:200px}
-
-    .obj-quote{
-        position:relative;
-        background:#f1f5ff;
-        border-left:4px solid var(--accent);
-        padding:.85rem 1rem .85rem 2.8rem;
-        font-style:italic;
-        color:#1e3a8a;
-        border-radius:8px;
-      }
-      .quote-icon{
-        position:absolute;left:.85rem;top:.6rem;
-      }
-      
-      .contact-list{margin:0;padding:0;list-style:none}
-      .contact-item{
-        display:flex;gap:.75rem;align-items:flex-start;margin-bottom:.65rem;
-      }
-      .contact-icon{
-        font-size:1.35rem;line-height:1;margin-top:.1rem
-      }
-      .contact-text{color:var(--text-sub);font-size:.85rem}
-
-      /* Badge Business Goal sur la face avant de la carte */
-.business-goal {
-    font-size: 0.9rem;
-    font-style: italic;
-    font-weight: 500;
-    padding: .35rem .75rem;
-    border-radius: .75rem;
-    line-height: 1.35;
-    display: inline-block;
-    margin-top: .75rem;
-    transition: background-color .25s ease, color .25s ease;
-  }
-  
-  /* Effet au survol (facultatif) : inversion teinte/texte */
-  .phase-card:hover .business-goal {
-    background-color: var(--accent);
-    color: #fff;
-  }
+    :root{--card-w:220px}
+    .phase-icon{font-size:1.9rem}
+    .business-goal{font-size:.8rem;padding:.4rem .8rem}
   }
   
