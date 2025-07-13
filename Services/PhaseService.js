@@ -1,121 +1,132 @@
 // Services/PhaseService.js
 export function getPhases() {
     return [
+      /* ---------- Phase 1 ---------- */
       {
         ic: "🧭",
         accent: "#0077D2",
-        title:  "Diagnostic",
-        sub:    "Auto-diagnostic de maturité digitale",
-  
-        // — nouveau —
-        desc: `Questionnaire structuré sur cinq dimensions (stratégie, processus, technologie,
-               culture et gouvernance) générant radars et scores afin de visualiser le
-               positionnement digital de l’entreprise et initier le plan d’amélioration.`,
-  
-        objectiveSentence: `Je veux connaître mes forces et mes faiblesses digitales en 10 minutes.`,
-  
+        title:  "Phase 1 • Diagnostic",
+        sub:    "Auto-diagnostic",
+        objectiveSentence: "Je dois connaître ma maturité digitale avant d’agir.",
+        /* Nouveau : contexte + module */
+        context: `Toute transformation débute par une photographie précise de la
+                  maturité numérique de l’entreprise afin d’objectiver les forces
+                  et les faiblesses sur les dimensions clés.`,
+        module : `Le module “Auto-diagnostic” s’appuie sur un questionnaire couvrant
+                  stratégie, processus, technologie, culture et gouvernance.
+                  Les réponses alimentent automatiquement des radars, scores
+                  et matrices synthétiques pour visualiser votre positionnement.`,
         objectifs: [
           "Se situer rapidement sur les 5 dimensions",
-          "Identifier forces et faiblesses sans jargon",
-          "Mobiliser les équipes grâce à un premier score"
+          "Identifier forces / faiblesses sans jargon",
+          "Obtenir un score pour mobiliser"
         ],
-  
         contacts: [
-          { icon:"📋", label:"Questionnaire mobile-first"    , text:"UX fluide, aide contextuelle" },
-          { icon:"📊", label:"Radar & scores dynamiques"     , text:"Vue instantanée des résultats" },
-          { icon:"💾", label:"Export PDF synthétique"        , text:"Partage interne rapide" }
+          "Questionnaire interactif mobile-first",
+          "Radar & scores dynamiques",
+          "Tooltip d’aide • Export PDF"
         ]
       },
   
+      /* ---------- Phase 2 ---------- */
       {
         ic: "📊",
         accent: "#27AE60",
-        title:  "Analyse sectorielle",
-        sub:    "Observatoire",
-  
-        desc: `Compare vos scores à ceux d’entreprises anonymisées similaires et affiche
-               des écarts prioritaires dans des tableaux de bord sectoriels exportables.`,
-  
-        objectiveSentence: `Je veux savoir où je me situe par rapport aux autres acteurs de mon secteur.`,
-  
+        title:  "Phase 2 • Benchmark",
+        sub:    "Comparaison sectorielle",
+        objectiveSentence: "Je veux me situer face à mes pairs du secteur.",
+        context: `Après le diagnostic, il est crucial de se comparer à des
+                  organisations similaires pour hiérarchiser les priorités
+                  et convaincre les parties prenantes.`,
+        module : `L’“Observatoire” Digital TAG interroge une base de cas
+                  anonymisés ; filtres (taille, secteur, maturité) et dashboards
+                  dynamiques mettent en évidence vos écarts et bonnes pratiques.
+                  Les données sont exportables via API ou PPT.`,
         objectifs: [
           "Comprendre sa position sectorielle",
           "Détecter les écarts prioritaires",
           "Justifier des choix auprès du COMEX"
         ],
         contacts: [
-          { icon:"📈", label:"Dashboards filtrables"      , text:"Secteur, taille, maturité…" },
-          { icon:"🔗", label:"API / Export PPT"           , text:"Intégration rapports internes" },
-          { icon:"🕒", label:"Benchmarks temps réel"      , text:"Base anonymisée mise à jour" }
+          "Dashboards filtrables en temps réel",
+          "Benchmarks anonymisés",
+          "API / Export PPT"
         ]
       },
   
+      /* ---------- Phase 3 ---------- */
       {
         ic: "🧩",
         accent: "#8E44AD",
-        title:  "Structuration",
-        sub:    "Canevas de transformation",
-  
-        desc: `Tableau interactif inspiré du Business Model Canvas, pré-rempli par le diagnostic
-               puis enrichi en drag-and-drop pour construire la feuille de route cible.`,
-  
-        objectiveSentence: `Je veux prioriser nos actions et jalons dans un canevas visuel partagé.`,
-  
+        title:  "Phase 3 • Structuration",
+        sub:    "Canevas interactif",
+        objectiveSentence: "Je dois traduire mes priorités en feuille de route claire.",
+        context: `Les enseignements précédents doivent se transformer en trajectoire
+                  opérationnelle : objectifs, actions, jalons et KPIs alignés
+                  avec toutes les équipes.`,
+        module : `Le “Canevas de transformation” est un tableau drag-and-drop
+                  inspiré du Business Model Canvas ; pré-rempli par vos résultats,
+                  il se complète en atelier (multi-curseur) et reste évolutif
+                  pour une planification agile.`,
         objectifs: [
           "Formaliser une feuille de route claire",
           "Aligner métiers, IT et direction",
-          "Prioriser actions, jalons et KPI"
+          "Prioriser actions & jalons"
         ],
         contacts: [
-          { icon:"🖱️", label:"Drag-and-drop canvas" , text:"Blocs objectifs, KPI, ressources" },
-          { icon:"🤝", label:"Co-édition temps réel", text:"Ateliers multi-utilisateurs" },
-          { icon:"🔔", label:"Notifications jalons" , text:"Suivi de validation" }
+          "Canvas drag-and-drop",
+          "Co-édition en temps réel",
+          "Notifications de validation"
         ]
       },
   
+      /* ---------- Phase 4 ---------- */
       {
         ic: "🤖",
         accent: "#FF884D",
-        title:  "Accompagnement intelligent",
-        sub:    "Agent virtuel et coachs",
-  
-        desc: `Agent conversationnel exploitant NLP & ML pour reformuler le diagnostic,
-               suggérer des actions et détecter signaux faibles, avec apprentissage continu.`,
-  
-        objectiveSentence: `Je veux des recommandations précises et adaptées à notre contexte.`,
-  
+        title:  "Phase 4 • IA",
+        sub:    "Accompagnement intelligent",
+        objectiveSentence: "Je veux des recommandations personnalisées en continu.",
+        context: `Au fur et à mesure de l’exécution, l’entreprise a besoin de
+                  conseils contextualisés et d’une veille proactive pour sécuriser
+                  sa trajectoire.`,
+        module : `L’agent conversationnel Digital TAG, basé NLP/ML, reformule les
+                  résultats, détecte signaux faibles et propose actions ou
+                  formations adaptées. Disponible via chat, notifications push
+                  ou mail.`,
         objectifs: [
-          "Traduire les données en actions concrètes",
-          "Obtenir recommandations personnalisées",
-          "Détecter incohérences / risques tôt"
+          "Traduire données en actions concrètes",
+          "Recevoir recommandations personnalisées",
+          "Repérer incohérences / risques tôt"
         ],
         contacts: [
-          { icon:"💬", label:"Chat intégré"        , text:"Interface GPT-like contextualisée" },
-          { icon:"✨", label:"Suggestions proactives", text:"Push + e-mail ciblés" },
-          { icon:"📊", label:"Dashboard Insight"  , text:"Signaux faibles agrégés" }
+          "Chat GPT-like intégré",
+          "Suggestions push & mail",
+          "Dashboard signaux faibles"
         ]
       },
   
+      /* ---------- Phase 5 ---------- */
       {
         ic: "📍",
         accent: "#E74C3C",
-        title:  "Formalisation des actions",
-        sub:    "Feuille de route",
-  
-        desc: `Génère une synthèse visuelle et exportable du plan d’action, séquencée
-               court / moyen / long terme, pour piloter et communiquer la transformation.`,
-  
-        objectiveSentence: `Je veux une roadmap claire à présenter et à suivre.`,
-  
+        title:  "Phase 5 • Roadmap",
+        sub:    "Formalisation",
+        objectiveSentence: "Je dois partager la roadmap et piloter l’exécution.",
+        context: `Pour embarquer les parties prenantes et suivre l’avancement, la
+                  feuille de route doit être synthétique, visuelle et exportable.`,
+        module : `Le module “Feuille de route” génère automatiquement une timeline
+                  court / moyen / long terme, un portefeuille projets et des
+                  exports PDF, Excel ou API pour le reporting.`,
         objectifs: [
-          "Compiler et partager la roadmap",
-          "Sécuriser budgets et ressources",
+          "Compiler & partager la roadmap",
+          "Sécuriser budgets / ressources",
           "Piloter l’exécution"
         ],
         contacts: [
-          { icon:"🗺️", label:"Timeline interactive", text:"Vue horizon temporel" },
-          { icon:"📤", label:"Exports PDF / Excel" , text:"Partage multi-supports" },
-          { icon:"📊", label:"Portefeuille projets", text:"Indicateurs temps réel" }
+          "Timeline visuelle",
+          "Exports multiples",
+          "Vue portefeuille + indicateurs"
         ]
       }
     ];
