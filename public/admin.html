@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Feedback – Digital TAG</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; background: #f9f9f9; }
+    input, button { padding: 0.5rem; margin: 0.5rem 0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { border: 1px solid #ccc; padding: 0.5rem; font-size: 0.9rem; }
+    th { background: #0077d2; color: white; }
+    #controls { margin-bottom: 1rem; }
+    #error { color: red; }
+  </style>
+</head>
+<body>
+  <h1>🔐 Espace Admin – Feedbacks Digital TAG</h1>
+
+  <div id="controls">
+    <input type="password" id="tokenInput" placeholder="Jeton admin" />
+    <button onclick="loadData()">Charger les feedbacks</button>
+    <button onclick="exportPDF()">📄 Export PDF</button>
+    <button onclick="exportCSV()">📊 Export CSV</button>
+    <div id="error"></div>
+  </div>
+
+  <table id="feedbackTable">
+    <thead>
+      <tr>
+        <th>Phase</th>
+        <th>Module</th>
+        <th>Organisation</th>
+        <th>Secteur</th>
+        <th>Email</th>
+        <th>Note</th>
+        <th>Commentaire</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    async function loadData() {
+      const token = document.getElementById("tokenInput").value;
+      const error = document.getElementById("error");
+      error.textContent = "";
+
+      try {
+        const res = await fetch("/admin/feedback", {
+          method: "GET",
+          headers: { "x-admin-token": token },
+          credentials: "same-origin"
+        });
+        if (!res.ok) throw new Error(await res.text());
+        const data = await res.json();
+
+        const tbody = document.querySelector("#feedbackTable tbody");
+        tbody.innerHTML = "";
+        data.forEach(row => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${row.phase}</td>
+            <td>${row.module}</td>
+            <td>${row.organisation}</td>
+            <td>${row.sector}</td>
+            <td>${row.email}</td>
+            <td>${row.rating}</td>
+            <td>${row.comment}</td>
+            <td>${new Date(row.created_at).toLocaleString()}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        error.textContent = err.message;
+      }
+    }
+
+    function exportPDF() {
+      const token = document.getElementById("tokenInput").value;
+      const url = `/admin/pdf`;
+      const link = document.createElement('a');
+      link.href = url;
+      link.target = '_blank';
+      link.setAttribute('x-admin-token', token);
+      link.click();
+    }
+
+    function exportCSV() {
+      const token = document.getElementById("tokenInput").value;
+      window.open(`/admin/csv?token=${encodeURIComponent(token)}`, '_blank');
+    }
+  </script>
+</body>
+</html>
