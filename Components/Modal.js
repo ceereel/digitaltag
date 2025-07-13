@@ -1,93 +1,61 @@
 // Components/Modal.js
-
-export function setupModal(phases) {
-    const modal = document.getElementById("modal");
-    const box = document.getElementById("modalBox");
-    const mI = document.getElementById("mIcon");
-    const mT = document.getElementById("mTitle");
-    const mS = document.getElementById("mSub");
-    const mC = document.getElementById("mContent");
-    const fb = document.getElementById("fb");
-    const msg = document.getElementById("msg");
-    const sendBtn = document.getElementById("sendBtn");
+export function setupModal(phases){
+    const modal=document.getElementById("modal");
+    const box  =document.getElementById("modalBox");
+    const mI   =document.getElementById("mIcon");
+    const mT   =document.getElementById("mTitle");
+    const mS   =document.getElementById("mSub");
+    const mC   =document.getElementById("mContent");
+    const fb   =document.getElementById("fb");
+    const msg  =document.getElementById("msg");
+    const send =document.getElementById("sendBtn");
   
-    let current = 0;
-    let selected = null;
-    let notes = {};
+    let cur=0, sel=null;
+    const notes={};
   
-    function openModal(idx) {
-      const p = phases[idx];
-      current = idx;
-      selected = null;
+    function open(idx){
+      const p=phases[idx];cur=idx;sel=null;
   
-      document.documentElement.style.setProperty("--accent", p.accent);
-      box.style.borderLeftColor = p.accent;
-      mI.textContent = p.ic;
-      mT.textContent = p.title;
-      mS.textContent = p.sub;
-      mC.innerHTML = `
-        <div class="text-sm text-gray-700">
-          <h4 class="text-base font-semibold text-[${p.accent}] mb-2">🎯 Objectifs</h4>
-          <ul class="list-disc list-inside mb-4">
-            ${p.objectifs.split("<br>").map(line => `<li>${line.trim()}</li>`).join("")}
-          </ul>
-          <h4 class="text-base font-semibold text-[${p.accent}] mb-2">🧩 Points de contact</h4>
-          <ul class="list-disc list-inside">
-            ${p.contact.split("<br>").map(line => `<li>${line.trim()}</li>`).join("")}
-          </ul>
-        </div>
+      document.documentElement.style.setProperty("--accent",p.accent);
+      box.style.borderLeftColor=p.accent;
+      mI.textContent=p.ic; mT.textContent=p.title; mS.textContent=p.sub;
+  
+      mC.innerHTML=`
+        <p>${p.content}</p>
+        <div class="section-title" style="color:${p.accent}">🎯 Objectifs</div>
+        <ul>${p.objectifs.map(o=>`<li>${o}</li>`).join("")}</ul>
+        <div class="section-title" style="color:${p.accent}">🧩 Points de contact</div>
+        <ul>${p.contact.map(c=>`<li>${c}</li>`).join("")}</ul>
       `;
   
-      document.querySelectorAll(".rating-btn").forEach(b => b.classList.remove("selected"));
-      fb.value = "";
-      msg.classList.add("hidden");
+      document.querySelectorAll(".rating-btn").forEach(b=>b.classList.remove("selected"));
+      fb.value=""; msg.classList.add("hidden");
+      if(notes[idx]){setRate(notes[idx].rate);fb.value=notes[idx].fb;}
   
-      if (notes[idx]) {
-        setRate(notes[idx].rate);
-        fb.value = notes[idx].fb;
-      }
-  
-      modal.classList.add("show");
-      document.body.style.overflow = "hidden";
+      modal.classList.remove("hidden");modal.classList.add("show");
+      document.body.style.overflow="hidden";
+    }
+    function close(){
+      modal.classList.remove("show");modal.classList.add("hidden");
+      document.body.style.overflow="auto";
+    }
+    function setRate(r){
+      sel=r;
+      document.querySelectorAll(".rating-btn").forEach(b=>
+        b.classList.toggle("selected",b.dataset.rating===r));
     }
   
-    function closeModal() {
-      modal.classList.remove("show");
-      document.body.style.overflow = "auto";
-    }
-  
-    function setRate(rating) {
-      selected = rating;
-      document.querySelectorAll(".rating-btn").forEach(btn =>
-        btn.classList.toggle("selected", btn.dataset.rating === rating)
-      );
-    }
-  
-    document.getElementById("closeBtn").onclick = closeModal;
-    modal.onclick = e => { if (e.target === modal) closeModal(); };
-    document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
-  
-    document.querySelectorAll(".rating-btn").forEach(btn =>
-      btn.onclick = () => setRate(btn.dataset.rating)
-    );
-  
-    sendBtn.onclick = () => {
-      if (!selected) return alert("Merci de choisir une évaluation.");
-      notes[current] = {
-        rate: selected,
-        fb: fb.value.trim()
-      };
+    document.getElementById("closeBtn").onclick=close;
+    modal.onclick=e=>{if(e.target===modal)close();};
+    document.addEventListener("keydown",e=>{if(e.key==="Escape")close();});
+    document.querySelectorAll(".rating-btn").forEach(btn=>btn.onclick=()=>setRate(btn.dataset.rating));
+    send.onclick=()=>{
+      if(!sel) return alert("Merci de choisir une évaluation.");
+      notes[cur]={rate:sel,fb:fb.value.trim()};
       msg.classList.remove("hidden");
-      setTimeout(() => msg.classList.add("hidden"), 2000);
+      setTimeout(()=>msg.classList.add("hidden"),2000);
     };
   
-    // Activation via bouton "Détails"
-    document.addEventListener("click", e => {
-      const btn = e.target.closest(".details-btn");
-      if (btn) {
-        const idx = parseInt(btn.dataset.idx);
-        if (!isNaN(idx)) openModal(idx);
-      }
-    });
+    window.addEventListener("openModal",e=>open(e.detail.idx));
   }
   

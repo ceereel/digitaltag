@@ -2,91 +2,54 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>PME Journey Map</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Google Fonts & Tailwind (reset) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <style>
-    :root {
-      --accent: #0077D2;
-      --txt: #1a1a1a;
-      --txt-body: #4B5563;
-      --bg: #F9FAFB;
-    }
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg);
-      color: var(--txt);
-    }
 
-    .modal {
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease-out;
-    }
-
-    .modal.show {
-      opacity: 1;
-      pointer-events: auto;
-      transition: opacity 0.5s ease-in;
-    }
-
-    .btn-send {
-      background: linear-gradient(90deg, #0090ff, #0073ce);
-      color: #fff;
-      font-weight: 600;
-      padding: 0.55rem 1.6rem;
-      border-radius: 0.5rem;
-      transition: transform 0.25s ease, box-shadow 0.25s;
-    }
-
-    .btn-send:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 18px -4px rgba(0,115,206,0.4);
-    }
-
-    .rating-btn.selected {
-      border: 2px solid var(--accent);
-      background: rgba(0,119,210,0.1);
-      transform: scale(1.08);
-    }
-  </style>
+  <!-- Feuille de style locale -->
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-  <!-- En-tête -->
-  <header class="text-center py-6">
-    <h1 class="text-3xl font-bold">🧭 PME Journey Map</h1>
-    <p class="text-gray-600 mt-2">Visualisation du parcours utilisateur par phase</p>
+  <header class="text-center py-8">
+    <h1 class="text-2xl font-bold">PME Journey Map</h1>
+    <p class="text-sm text-gray-600">Vue synthétique des 5 phases de transformation</p>
   </header>
 
-  <!-- Conteneur horizontal des cartes -->
-  <div id="cardContainer" class="flex flex-wrap justify-center items-start gap-6 px-6 py-10"></div>
+  <!-- Cartes -->
+  <main>
+    <div id="cardContainer"></div>
+  </main>
 
-  <!-- Modal -->
-  <div id="modal" class="modal fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div id="modalBox" class="bg-white w-full max-w-3xl mx-4 rounded-xl border-l-8 shadow-2xl max-h-[90vh] overflow-y-auto p-6 sm:p-8">
+  <!-- Modale -->
+  <div id="modal" class="modal hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div id="modalBox"
+         class="bg-white w-full max-w-xl mx-4 rounded-xl border-l-8 shadow-2xl max-h-[90vh] overflow-y-auto p-6 sm:p-8">
       <header class="flex justify-between items-start mb-6">
         <div class="flex items-start gap-4">
           <div id="mIcon" class="text-4xl"></div>
           <div>
-            <h2 id="mTitle" class="text-2xl font-bold"></h2>
+            <h2 id="mTitle" class="text-xl font-bold"></h2>
             <p id="mSub" class="text-sm text-gray-500"></p>
           </div>
         </div>
         <button id="closeBtn" class="text-3xl font-bold text-gray-400 hover:text-gray-800">&times;</button>
       </header>
-      <div id="mContent" class="text-[var(--txt-body)] text-[0.95rem] leading-relaxed space-y-5"></div>
+
+      <div id="mContent" class="text-[var(--text-body)] text-[0.95rem] leading-relaxed space-y-5"></div>
 
       <!-- Feedback -->
-      <section class="mt-12 p-6 border rounded-xl space-y-6">
+      <section class="mt-10 p-6 border rounded-xl space-y-6">
         <h3 class="text-center text-lg font-semibold">💭 Votre évaluation</h3>
         <div class="flex justify-center space-x-10">
           <button class="rating-btn text-4xl" data-rating="unsatisfied">😞</button>
           <button class="rating-btn text-4xl" data-rating="neutral">😐</button>
           <button class="rating-btn text-4xl" data-rating="satisfied">😊</button>
         </div>
-        <textarea id="fb" class="w-full h-24 px-3 py-2 border rounded text-sm resize-none" placeholder="Votre commentaire (facultatif)"></textarea>
+        <textarea id="fb" class="w-full h-24 px-3 py-2 border rounded text-sm resize-none"
+                  placeholder="Votre commentaire (facultatif)"></textarea>
         <div class="text-center">
           <button id="sendBtn" class="btn-send">Envoyer</button>
         </div>
@@ -97,8 +60,7 @@
     </div>
   </div>
 
-  <!-- Script -->
-  <script type="module" src="./main.js"></script>
-
+  <!-- JS -->
+  <script type="module" src="main.js"></script>
 </body>
 </html>
