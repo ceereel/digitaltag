@@ -1,14 +1,22 @@
 // Services/AnimationServices.js
 
-export function animateDots(dots, icons, currIconEl, currTextEl) {
-    dots.forEach(dot => dot.classList.remove("bg-[var(--accent)]"));
+export function animatePhaseIndicator(phases) {
+    const dots = [...document.querySelectorAll('.timeline-dot')];
+    const icons = phases.map(p => p.ic);
+    const currIcon = document.getElementById('currIcon');
+    const currText = document.getElementById('currText');
   
-    let i = 0;
-    (function step() {
-      dots[i].classList.add("bg-[var(--accent)]");
-      currIconEl.textContent = icons[i];
-      currTextEl.textContent = `Phase ${i + 1}`;
-      if (++i < icons.length) setTimeout(step, 1000);
-    })();
+    function stepThrough(i = 0) {
+      dots.forEach(d => d.classList.remove('active'));
+      dots[i].classList.add('active');
+      currIcon.textContent = icons[i];
+      currText.textContent = `Phase ${i + 1}`;
+      if (i + 1 < phases.length) {
+        setTimeout(() => stepThrough(i + 1), 1200);
+      }
+    }
+  
+    stepThrough();
+    setInterval(stepThrough, 15000);
   }
   

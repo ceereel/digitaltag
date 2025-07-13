@@ -2,61 +2,73 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Digital TAG – PME Journey Map</title>
-
-  <!-- Tailwind CDN (ou ton build local) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- styles persos -->
-  <link rel="stylesheet" href="./styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PME Journey Map – Digital TAG</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #0077D2;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f9fafb;
+      color: #1a1a1a;
+    }
+    .modal {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease-out;
+    }
+    .modal.show {
+      opacity: 1;
+      pointer-events: auto;
+      transition: opacity 0.6s ease-in;
+    }
+    .rating-btn.selected {
+      border: 2px solid var(--accent);
+      background: rgba(0,119,210,0.1);
+      transform: scale(1.08);
+    }
+  </style>
 </head>
+<body>
 
-<body class="antialiased text-gray-700 bg-white">
+<!-- Wheel container -->
+<div id="wheel" class="relative mx-auto my-16" style="width: 600px; height: 600px; max-width: 95vw;"></div>
 
-  <!-- ░░ Header ░░ -->
-  <header class="text-center my-10">
-    <h1 class="text-4xl font-extrabold text-[#0077d2]">Digital TAG</h1>
-    <h2 class="text-lg font-semibold  text-[#0077d2]">PME Journey Map</h2>
-  </header>
-
-  <!-- ░░ Section dynamique (progress + timeline + cartes) ░░ -->
-  <main id="app" class="px-4"></main>
-
-  <!-- ░░ Modale (affichée par JS) ░░ -->
-  <div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
-    <div id="modalBox"
-         class="bg-white rounded-2xl shadow-2xl p-8 w-[90%] max-w-[46rem] max-h-[90vh] overflow-y-auto border-t-8 border-transparent">
-      <!-- header -->
-      <div class="flex justify-between items-start mb-6">
-        <div class="flex items-center gap-4">
-          <div id="modalIcon" class="text-3xl"></div>
-          <div>
-            <h2 id="modalTitle" class="text-2xl font-bold"></h2>
-            <p  id="modalSubtitle" class="text-gray-500 text-sm"></p>
-          </div>
+<!-- Modal -->
+<div id="modal" class="modal fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+  <div id="modalBox" class="bg-white w-full max-w-3xl mx-4 rounded-xl border-l-8 shadow-2xl max-h-[90vh] overflow-y-auto p-6 sm:p-8">
+    <header class="flex justify-between items-start mb-6">
+      <div class="flex items-start gap-4">
+        <div id="mIcon" class="text-4xl"></div>
+        <div>
+          <h2 id="mTitle" class="text-2xl font-bold"></h2>
+          <p id="mSub" class="text-sm text-gray-500"></p>
         </div>
-        <button id="modalCloseBtn" class="text-gray-400 hover:text-gray-700 text-3xl font-bold">
-          &times;
-        </button>
       </div>
-      <!-- body -->
-      <div id="modalContent" class="prose max-w-none"></div>
-      <!-- footer -->
-      <div class="text-center mt-8">
-        <button class="bg-[#0077d2] hover:bg-[#005a9f] text-white rounded-lg px-6 py-3 font-semibold"
-                id="modalCloseBtnBottom">
-          Fermer
-        </button>
-      </div>
-    </div>
-  </div>
+      <button id="closeBtn" class="text-3xl font-bold text-gray-400 hover:text-gray-800">&times;</button>
+    </header>
+    <div id="mContent" class="text-gray-700 text-sm leading-relaxed space-y-5"></div>
 
-  <!-- ░░ Modules ES (ordre important) ░░ -->
-  <script type="module" src="./Services/PhaseService.js"></script>
-  <script type="module" src="./Components/Modal.js"></script>
-  <script type="module" src="./Components/Cards.js"></script>
-  <script type="module" src="./Services/AnimationServices.js"></script>
-  <script type="module" src="./main.js"></script>
+    <!-- Feedback -->
+    <section class="mt-12 p-6 border rounded-xl space-y-6">
+      <h3 class="text-center text-lg font-semibold">💭 Votre évaluation</h3>
+      <div class="flex justify-center space-x-10">
+        <button class="rating-btn text-4xl" data-rating="unsatisfied">😞</button>
+        <button class="rating-btn text-4xl" data-rating="neutral">😐</button>
+        <button class="rating-btn text-4xl" data-rating="satisfied">😊</button>
+      </div>
+      <textarea id="fb" class="w-full h-24 px-3 py-2 border rounded text-sm resize-none" placeholder="Votre commentaire (facultatif)"></textarea>
+      <div class="text-center">
+        <button id="sendBtn" class="bg-[var(--accent)] text-white font-semibold px-6 py-2 rounded hover:shadow-lg transition">Envoyer</button>
+      </div>
+      <div id="msg" class="hidden text-sm text-green-700 bg-green-100 text-center py-2 rounded">🎉 Merci pour votre retour !</div>
+    </section>
+  </div>
+</div>
+
+<script type="module" src="./main.js"></script>
 </body>
 </html>
