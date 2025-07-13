@@ -1,6 +1,6 @@
 // index.js
 // ────────────────────────────────────────────────────────────────
-//  Feedback API – Digital TAG (version SQLite)
+//  Feedback API + Frontend static – Digital TAG (SQLite)
 // ────────────────────────────────────────────────────────────────
 import express from 'express';
 import cors from 'cors';
@@ -13,16 +13,28 @@ import { buildPdf } from './lib/pdf.js';
 dotenv.config();
 
 const PORT = process.env.PORT || 4000;
-const ADMIN_TOKEN = process.env.ADMIN_TOKEN;
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'S3cr3t123';
 
 const app = express();
 
-// CORS permissif avec contrôle d'en-têtes
+// Gérer __dirname avec ESModules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// CORS autorisé depuis le frontend Render
+const ALLOWED_ORIGINS = [
+  'http://localhost:3000',
+  'https://digitaltag.onrender.com'
+];
+
 app.use(cors({
-  origin: true,
+  origin: (origin, callback) => {
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`Not allowed by CORS: ${origin}`));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'x-admin-token']
@@ -30,15 +42,19 @@ app.use(cors({
 
 app.use(express.json());
 
-// Servir les fichiers statiques (HTML, favicon, etc.)
+// 🔁 Sert les fichiers statiques depuis /public
 app.use(express.static(path.join(__dirname, 'public')));
 
-// GET /feedback → test simple
+// ────────────────────────────────────────────────────────────────
+//  API Routes
+// ────────────────────────────────────────────────────────────────
+
+// GET /feedback (simple test)
 app.get('/feedback', (req, res) => {
   res.send('✅ API en ligne – POST uniquement');
 });
 
-// POST /feedback → stocke une évaluation
+// POST /feedback (sauvegarde une évaluation)
 app.post('/feedback', (req, res) => {
   const { org, sect, mail, module, rating, comment = '—' } = req.body;
 
@@ -60,10 +76,10 @@ app.post('/feedback', (req, res) => {
   }
 });
 
-// GET /admin/feedback → liste complète des évaluations
+// GET /admin/feedback (liste protégée)
 app.get('/admin/feedback', (req, res) => {
   const token = req.headers['x-admin-token'];
-  if (token !== ADMIN_TOKEN) return res.status(403).send("Accès refusé");
+  if (token !== ADMIN_TOKEN) return res.status(403).send("Accès refusé – jeton invalide");
 
   try {
     const rows = db.prepare('SELECT * FROM evaluations ORDER BY created_at DESC').all();
@@ -73,15 +89,15 @@ app.get('/admin/feedback', (req, res) => {
   }
 });
 
-// GET /admin/pdf → export PDF des feedbacks
+// GET /admin/pdf (export PDF)
 app.get('/admin/pdf', (req, res) => {
   const token = req.headers['x-admin-token'];
-  if (token !== ADMIN_TOKEN) return res.status(403).send("Accès refusé");
+  if (token !== ADMIN_TOKEN) return res.status(403).send("Accès refusé – jeton invalide");
 
   try {
     const rows = db.prepare('SELECT * FROM evaluations ORDER BY created_at DESC').all();
     const pdfBuffer = buildPdf(rows);
-    res.setHeader('Content-Disposition', 'inline; filename=\"feedbacks.pdf\"');
+    res.setHeader('Content-Disposition', 'inline; filename="feedbacks.pdf"');
     res.setHeader('Content-Type', 'application/pdf');
     res.send(pdfBuffer);
   } catch (err) {
@@ -89,8 +105,14 @@ app.get('/admin/pdf', (req, res) => {
   }
 });
 
-// TODO (optionnel) : GET /admin/csv pour export CSV
+// Catch-all → redirige vers index.html (cas SPA)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/index.html'));
+});
 
+// ────────────────────────────────────────────────────────────────
+//  Start server
+// ────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`✅ Feedback API SQLite running on http://localhost:${PORT}`);
+  console.log(`✅ Feedback API + Frontend sur http://localhost:${PORT}`);
 });
