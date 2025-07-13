@@ -1,9 +1,11 @@
-// Stocke / récupère l'utilisateur dans localStorage
+/* localStorage helpers */
 export function saveUser({ org, sect, mail }) {
     localStorage.setItem("dtagUser", JSON.stringify({ org, sect, mail }));
   }
   export function getUser() {
-    const raw = localStorage.getItem("dtagUser");
-    return raw ? JSON.parse(raw) : null;
+    try {
+      const raw = localStorage.getItem("dtagUser");
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
   }
   
