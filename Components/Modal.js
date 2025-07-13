@@ -1,61 +1,97 @@
 // Components/Modal.js
-export function setupModal(phases){
-    const modal=document.getElementById("modal");
-    const box  =document.getElementById("modalBox");
-    const mI   =document.getElementById("mIcon");
-    const mT   =document.getElementById("mTitle");
-    const mS   =document.getElementById("mSub");
-    const mC   =document.getElementById("mContent");
-    const fb   =document.getElementById("fb");
-    const msg  =document.getElementById("msg");
-    const send =document.getElementById("sendBtn");
+export function setupModal(phases) {
+    /* Raccourcis DOM */
+    const modal   = document.getElementById("modal");
+    const box     = document.getElementById("modalBox");
+    const mI      = document.getElementById("mIcon");
+    const mT      = document.getElementById("mTitle");
+    const mS      = document.getElementById("mSub");
+    const mC      = document.getElementById("mContent");
+    const fb      = document.getElementById("fb");
+    const msg     = document.getElementById("msg");
+    const sendBtn = document.getElementById("sendBtn");
+    const ratingButtons = [...document.querySelectorAll(".rating-btn")];
   
-    let cur=0, sel=null;
-    const notes={};
+    let current   = 0;
+    let selected  = null;
+    const notes   = {};
   
-    function open(idx){
-      const p=phases[idx];cur=idx;sel=null;
+    /* ------- ouverture ------- */
+    function openModal(idx){
+      const p = phases[idx];
+      current  = idx;
+      selected = null;
   
-      document.documentElement.style.setProperty("--accent",p.accent);
-      box.style.borderLeftColor=p.accent;
-      mI.textContent=p.ic; mT.textContent=p.title; mS.textContent=p.sub;
+      /* Palette dynamique */
+      document.documentElement.style.setProperty("--accent", p.accent);
+      box.style.borderLeftColor = p.accent;
   
-      mC.innerHTML=`
-        <p>${p.content}</p>
-        <div class="section-title" style="color:${p.accent}">🎯 Objectifs</div>
-        <ul>${p.objectifs.map(o=>`<li>${o}</li>`).join("")}</ul>
-        <div class="section-title" style="color:${p.accent}">🧩 Points de contact</div>
-        <ul>${p.contact.map(c=>`<li>${c}</li>`).join("")}</ul>
+      /* Contenu header */
+      mI.textContent = p.ic;
+      mT.textContent = p.title;
+      mS.textContent = p.sub;
+  
+      /* Corps de texte */
+      mC.innerHTML = `
+        <p class="mb-4">${p.desc}</p>
+  
+        <blockquote class="obj-quote mb-6">
+          <span class="quote-icon">🎯</span>${p.objectiveSentence}
+        </blockquote>
+  
+        <h4 class="section-title" style="color:${p.accent}">Objectifs métier clés</h4>
+        <ul class="list-disc ml-5 mb-6">${p.objectifs.map(o=>`<li>${o}</li>`).join("")}</ul>
+  
+        <h4 class="section-title" style="color:${p.accent}">Points de contact</h4>
+        <ul class="contact-list">
+          ${p.contacts.map(c=>`
+            <li class="contact-item">
+              <span class="contact-icon">${c.icon}</span>
+              <span>
+                <strong>${c.label}</strong><br>
+                <span class="contact-text">${c.text}</span>
+              </span>
+            </li>`).join("")}
+        </ul>
       `;
   
-      document.querySelectorAll(".rating-btn").forEach(b=>b.classList.remove("selected"));
+      /* Reset évaluation */
+      ratingButtons.forEach(b=>b.classList.remove("selected"));
       fb.value=""; msg.classList.add("hidden");
-      if(notes[idx]){setRate(notes[idx].rate);fb.value=notes[idx].fb;}
+      if(notes[idx]){ setRate(notes[idx].rate); fb.value=notes[idx].fb; }
   
-      modal.classList.remove("hidden");modal.classList.add("show");
+      /* Affichage */
+      modal.classList.remove("hidden"); modal.classList.add("show");
       document.body.style.overflow="hidden";
     }
-    function close(){
-      modal.classList.remove("show");modal.classList.add("hidden");
+  
+    /* ------- fermeture ------- */
+    function closeModal(){
+      modal.classList.remove("show");
+      setTimeout(()=>modal.classList.add("hidden"),300);
       document.body.style.overflow="auto";
     }
+  
+    /* ------- notation ------- */
     function setRate(r){
-      sel=r;
-      document.querySelectorAll(".rating-btn").forEach(b=>
-        b.classList.toggle("selected",b.dataset.rating===r));
+      selected=r;
+      ratingButtons.forEach(b=>b.classList.toggle("selected",b.dataset.rating===r));
     }
   
-    document.getElementById("closeBtn").onclick=close;
-    modal.onclick=e=>{if(e.target===modal)close();};
-    document.addEventListener("keydown",e=>{if(e.key==="Escape")close();});
-    document.querySelectorAll(".rating-btn").forEach(btn=>btn.onclick=()=>setRate(btn.dataset.rating));
-    send.onclick=()=>{
-      if(!sel) return alert("Merci de choisir une évaluation.");
-      notes[cur]={rate:sel,fb:fb.value.trim()};
+    /* --- listeners globaux --- */
+    document.getElementById("closeBtn").onclick=closeModal;
+    modal.onclick = e=>{ if(e.target===modal) closeModal(); };
+    document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeModal(); });
+  
+    ratingButtons.forEach(btn=>btn.onclick=()=>setRate(btn.dataset.rating));
+    sendBtn.onclick=()=>{
+      if(!selected) return alert("Merci de choisir une évaluation.");
+      notes[current]={rate:selected,fb:fb.value.trim()};
       msg.classList.remove("hidden");
       setTimeout(()=>msg.classList.add("hidden"),2000);
     };
   
-    window.addEventListener("openModal",e=>open(e.detail.idx));
+    /* --- écoute ouverture depuis carte --- */
+    window.addEventListener("openModal",e=>openModal(e.detail.idx));
   }
   

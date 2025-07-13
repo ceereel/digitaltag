@@ -1,48 +1,166 @@
+/**************************************
+ *  PME Journey Map – styles.css (v2)  *
+ *************************************/
+
+/* ---------- Variables globales ---------- */
 :root{
-    --accent:#0077d2;
-    --text:#1a1a1a;
-    --text-body:#4b5563;
-    --bg:#f9fafb;
-    --card-width:260px;
+    --accent      : #0077d2;           /* écrasé dynamiquement côté JS pour la modale */
+    --bg          : #f6f7fa;
+    --surface     : #ffffff;
+    --text        : #111827;           /* gris presque noir */
+    --text-sub    : #6b7280;           /* gris secondaire */
+    --radius      : 14px;
+    --shadow      : 0 10px 30px -12px rgba(0,0,0,.15);
+    --card-width  : 270px;
+    --transition  : .35s cubic-bezier(.25,.8,.5,1);
   }
-  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);margin:0}
   
-  /* -------- Cartes -------- */
+  /* ---------- Base ---------- */
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4,h5{margin:0;font-weight:600}
+  
+  /* Scrollbar discrète (Chrome/Edge) */
+  ::-webkit-scrollbar{height:8px;width:8px}
+  ::-webkit-scrollbar-thumb{background:#c4c4c4;border-radius:4px}
+  ::-webkit-scrollbar-thumb:hover{background:#9ca3af}
+  ::-webkit-scrollbar-track{background:transparent}
+  
+  /* ---------- Cartes ---------- */
   #cardContainer{
-    display:flex;flex-wrap:nowrap;gap:1.5rem;
-    overflow-x:auto;padding:1.5rem 2rem;scroll-behavior:smooth;
+    display:flex;
+    gap:1.75rem;
+    padding:2rem 3rem;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
   }
   .phase-card{
-    background:#fff;border:2px solid var(--accent);border-radius:12px;
-    min-width:var(--card-width);max-width:var(--card-width);flex:0 0 auto;
-    box-shadow:0 5px 18px -6px rgba(0,0,0,.1);cursor:pointer;
-    transition:transform .25s ease;
+    scroll-snap-align:start;
+    flex:0 0 auto;
+    min-width:var(--card-width);
+    max-width:var(--card-width);
+    background:var(--surface);
+    border:2px solid var(--accent);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    transition:var(--transition);
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
   }
-  .phase-card:hover{transform:translateY(-6px)}
-  .phase-header{padding:1.25rem;text-align:center}
-  .phase-icon{font-size:2.2rem;margin-bottom:.4rem}
-  .phase-title{font-weight:600;font-size:1rem}
-  .phase-sub{font-size:.85rem;color:var(--text-body)}
-  .phase-back{background:#f4f4f6;font-size:.83rem;padding:.85rem 1rem 1.2rem;color:var(--text-body)}
-  .section-title{font-weight:600;margin:.6rem 0 .3rem;font-size:.86rem}
-  .phase-back ul{padding-left:1rem;margin:0;list-style:disc}
+  .phase-card::after{         /* halo subtil à l’hover */
+    content:"";
+    position:absolute;inset:0;
+    background:var(--accent);
+    opacity:0;
+    transition:opacity .4s;
+  }
+  .phase-card:hover{transform:translateY(-8px)}
+  .phase-card:hover::after{opacity:.06}
+  
+  /* Contenu carte */
+  .phase-header{
+    padding:1.5rem 1.25rem 1.25rem;
+    text-align:center;
+  }
+  .phase-icon{font-size:2.4rem;margin-bottom:.4rem;line-height:1}
+  .phase-title{font-size:1.05rem;font-weight:600;margin-bottom:.2rem}
+  .phase-sub{font-size:.86rem;color:var(--text-sub)}
+  .phase-back{
+    background:#f3f4f6;
+    padding:1.1rem 1.25rem 1.4rem;
+    font-size:.83rem;
+    color:var(--text-sub);
+  }
+  .section-title{
+    font-weight:600;
+    margin:.75rem 0 .4rem;
+    font-size:.88rem;
+  }
+  .phase-back ul{margin:0;padding-left:1.1rem;list-style:disc}
   .phase-back li{margin-bottom:.25rem}
   
-  /* -------- Modale -------- */
-  .modal{opacity:0;pointer-events:none;transition:opacity .25s ease-out}
+  /* ---------- Modale ---------- */
+  .modal{
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease-out;
+  }
   .modal.show{opacity:1;pointer-events:auto;transition:opacity .5s ease-in}
+  #modalBox{
+    transform:translateY(-18px) scale(.96);
+    transition:transform .4s cubic-bezier(.22,1,.36,1);
+  }
+  .modal.show #modalBox{transform:none}
   
-  /* Bouton Envoyer */
-  .btn-send{background:linear-gradient(90deg,#0090ff,#0073ce);color:#fff;font-weight:600;
-    padding:.55rem 1.6rem;border-radius:.5rem;
-    transition:transform .25s ease,box-shadow .25s}
-  .btn-send:hover{transform:translateY(-3px);box-shadow:0 8px 18px -4px rgba(0,115,206,.4)}
+  /* Bouton X */
+  #closeBtn{line-height:1;transition:transform .25s}
+  #closeBtn:hover{transform:rotate(90deg)}
+  
+  /* Bouton envoyer */
+  .btn-send{
+    background:linear-gradient(90deg,#0090ff,#0073ce);
+    color:#fff;font-weight:600;
+    padding:.6rem 1.8rem;border:none;
+    border-radius:8px;
+    box-shadow:0 8px 22px -6px rgba(0,115,206,.45);
+    transition:transform .28s cubic-bezier(.25,.8,.5,1),box-shadow .28s;
+  }
+  .btn-send:hover{transform:translateY(-4px)}
   .btn-send:active{transform:translateY(0);box-shadow:none}
-  .rating-btn.selected{border:2px solid var(--accent);background:rgba(0,119,210,.12);transform:scale(1.08)}
   
-  /* Responsive */
+  /* Rating emojis */
+  .rating-btn{
+    border:2px solid transparent;border-radius:50%;
+    padding:.35rem;transition:transform .25s,border-color .25s,background .25s;
+    line-height:1;
+  }
+  .rating-btn:hover{transform:scale(1.12)}
+  .rating-btn.selected{
+    border-color:var(--accent);
+    background:rgba(0,119,210,.12);
+    transform:scale(1.15);
+  }
+  
+  /* ---------- Responsiveness ---------- */
+  @media(max-width:1024px){
+    :root{--card-width:240px}
+  }
   @media(max-width:768px){
-    #cardContainer{gap:1rem;padding:1rem}
-    .phase-card{min-width:220px;max-width:220px}
+    #cardContainer{gap:1.1rem;padding:1.5rem}
+    :root{--card-width:220px}
+  }
+  @media(max-width:540px){
+    header h1{font-size:1.25rem}
+    #cardContainer{padding:1rem .8rem}
+    :root{--card-width:200px}
+
+    .obj-quote{
+        position:relative;
+        background:#f1f5ff;
+        border-left:4px solid var(--accent);
+        padding:.85rem 1rem .85rem 2.8rem;
+        font-style:italic;
+        color:#1e3a8a;
+        border-radius:8px;
+      }
+      .quote-icon{
+        position:absolute;left:.85rem;top:.6rem;
+      }
+      
+      .contact-list{margin:0;padding:0;list-style:none}
+      .contact-item{
+        display:flex;gap:.75rem;align-items:flex-start;margin-bottom:.65rem;
+      }
+      .contact-icon{
+        font-size:1.35rem;line-height:1;margin-top:.1rem
+      }
+      .contact-text{color:var(--text-sub);font-size:.85rem}
   }
   
