@@ -1,26 +1,36 @@
-import { getPhases }            from "./Services/PhaseService.js";
-import { createAndAppendCards } from "../Components/Cards.js";
-import { setupModal }           from "../Components/Modal.js";
-import { saveUser, getUser }    from "../Components/Auth.js";
+/* ------------------------------------------------------------------
+   main.js – point d’entrée
+------------------------------------------------------------------ */
 
-const phases = getPhases();
-createAndAppendCards(phases);
-setupModal(phases);
+import { renderCards }      from './Components/Cards.js';
+import { setupModal }       from './Components/Modal.js';
+import { renderFilterBar }  from './Components/FilterBar.js';
+import { applyFilter }      from './Services/FilterService.js';
+import { animateJourney }   from './Services/AnimationServices.js';
 
-/* ----- Login rapide ----- */
-const overlay = document.getElementById("loginOverlay");
-const form    = document.getElementById("loginForm");
+/* ----------------- Montage initial ----------------- */
+const cardZone   = document.getElementById('cardContainer');
+const filterZone = document.createElement('div');
+cardZone.before(filterZone);          // barre juste au-dessus des cartes
 
-const existing = getUser();
-if(existing){ overlay.classList.add("hidden"); }
-else{
-  form.addEventListener("submit", e=>{
-    e.preventDefault();
-    saveUser({
-      org : document.getElementById("org").value.trim(),
-      sect: document.getElementById("sect").value.trim(),
-      mail: document.getElementById("mail").value.trim()
-    });
-    overlay.classList.add("hidden");
-  });
-}
+// cartes complètes
+renderCards(cardZone);
+// barre de filtres
+renderFilterBar(filterZone, (filterId) => {
+  const filtered = applyFilter(filterId);
+  renderCards(cardZone, filtered);
+});
+
+// modale, timeline, etc.
+setupModal();
+animateJourney();
+setInterval(animateJourney, 15_000);
+
+/* -------------- (optionnel) overlay login ---------- */
+const overlay = document.getElementById('loginOverlay');
+const form    = document.getElementById('loginForm');
+
+form?.addEventListener('submit', (e) => {
+  e.preventDefault();
+  overlay?.classList.add('hidden');
+});

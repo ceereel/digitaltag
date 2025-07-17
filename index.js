@@ -24,6 +24,7 @@ const __dirname = path.dirname(__filename);
 // CORS autorisé depuis le frontend Render
 const ALLOWED_ORIGINS = [
   'http://localhost:4000',
+  'http://localhost:4000',
   'https://digitaltag-api.onrender.com'
 ];
 
