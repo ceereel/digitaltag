@@ -1,36 +1,12 @@
-/* ------------------------------------------------------------------
-   main.js – point d’entrée
------------------------------------------------------------------- */
+import { renderFilterBar } from './Components/FilterBar.js';
+import { setupModal }      from './Components/Modal.js';
 
-import { renderCards }      from './Components/Cards.js';
-import { setupModal }       from './Components/Modal.js';
-import { renderFilterBar }  from './Components/FilterBar.js';
-import { applyFilter }      from './Services/FilterService.js';
-import { animateJourney }   from './Services/AnimationServices.js';
+/* points d’ancrage DOM */
+const cardsRoot  = document.getElementById('cardContainer');
+const filterRoot = document.getElementById('filterBar');
 
-/* ----------------- Montage initial ----------------- */
-const cardZone   = document.getElementById('cardContainer');
-const filterZone = document.createElement('div');
-cardZone.before(filterZone);          // barre juste au-dessus des cartes
+/* barre + rendu initial */
+renderFilterBar(filterRoot, cardsRoot);
 
-// cartes complètes
-renderCards(cardZone);
-// barre de filtres
-renderFilterBar(filterZone, (filterId) => {
-  const filtered = applyFilter(filterId);
-  renderCards(cardZone, filtered);
-});
-
-// modale, timeline, etc.
+/* modale (× / esc) */
 setupModal();
-animateJourney();
-setInterval(animateJourney, 15_000);
-
-/* -------------- (optionnel) overlay login ---------- */
-const overlay = document.getElementById('loginOverlay');
-const form    = document.getElementById('loginForm');
-
-form?.addEventListener('submit', (e) => {
-  e.preventDefault();
-  overlay?.classList.add('hidden');
-});
