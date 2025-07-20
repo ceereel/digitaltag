@@ -22,7 +22,7 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// CORS autorisé depuis le frontend Render ou localhost
+// CORS autorisé depuis Render, localhost, etc.
 const ALLOWED_ORIGINS = [
   'http://localhost:4000',
   'http://127.0.0.1:5500',
@@ -45,26 +45,19 @@ app.use(cors({
 app.use(express.json());
 
 // ────────────────────────────────────────────────────────────────
-//  Serve fichiers statiques
+//  Servir tous les fichiers statiques depuis /public
 // ────────────────────────────────────────────────────────────────
 
-// Sert tous les fichiers dans /public (HTML, main.js, styles.css)
 app.use(express.static(path.join(__dirname, 'public')));
-
-// Sert aussi les sous-dossiers comme /components ou /services
-app.use('/components', express.static(path.join(__dirname, 'public/components')));
-app.use('/services', express.static(path.join(__dirname, 'public/services')));
 
 // ────────────────────────────────────────────────────────────────
 //  API Routes
 // ────────────────────────────────────────────────────────────────
 
-// GET /feedback : simple test
 app.get('/feedback', (req, res) => {
   res.send('✅ API en ligne – POST uniquement');
 });
 
-// POST /feedback : Sauvegarde une appréciation utilisateur
 app.post('/feedback', (req, res) => {
   const {
     organisation,
@@ -96,7 +89,6 @@ app.post('/feedback', (req, res) => {
   }
 });
 
-// GET /admin/feedback : Liste protégée
 app.get('/admin/feedback', (req, res) => {
   const token = req.headers['x-admin-token'];
   if (token !== ADMIN_TOKEN) return res.status(403).send("Accès refusé – jeton invalide");
@@ -109,7 +101,6 @@ app.get('/admin/feedback', (req, res) => {
   }
 });
 
-// GET /admin/pdf : Export PDF des évaluations
 app.get('/admin/pdf', (req, res) => {
   const token = req.headers['x-admin-token'];
   if (token !== ADMIN_TOKEN) return res.status(403).send("Accès refusé – jeton invalide");
@@ -125,13 +116,13 @@ app.get('/admin/pdf', (req, res) => {
   }
 });
 
-// Catch-all pour rediriger vers index.html (SPA)
+// Rediriger tout ce qui reste vers index.html (SPA)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 // ────────────────────────────────────────────────────────────────
-//  Start server
+//  Lancer le serveur
 // ────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`✅ Feedback API + Frontend sur http://localhost:${PORT}`);
