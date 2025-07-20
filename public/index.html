@@ -8,7 +8,7 @@
   <!-- Inter + Tailwind -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="/styles.css" />
 </head>
 <body class="antialiased text-gray-700 bg-white font-inter">
 
@@ -36,7 +36,6 @@
   <!-- MAIN -->
   <main class="px-4 relative">
     <div id="cardContainer"></div>
-    <!-- Ligne SVG pour la roadmap -->
     <svg id="roadmapSVG" class="absolute top-1/2 left-0 w-full h-1 z-0 hidden" viewBox="0 0 100 1" preserveAspectRatio="none">
       <line x1="0" y1="0.5" x2="100" y2="0.5" stroke="#0077d2" stroke-width="0.2" stroke-dasharray="1 1" />
     </svg>
@@ -59,8 +58,8 @@
     </div>
   </div>
 
-  <!-- SCRIPTS -->
-  <script type="module" src="Components/auth.js"></script>
-  <script type="module" src="main.js"></script>
+  <!-- ✅ SCRIPTS CORRIGÉS -->
+  <script type="module" src="/components/auth.js"></script>
+  <script type="module" src="/main.js"></script>
 </body>
 </html>
