@@ -22,7 +22,7 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// CORS autorisé depuis Render, localhost, etc.
+// CORS autorisé depuis le frontend Render ou localhost
 const ALLOWED_ORIGINS = [
   'http://localhost:4000',
   'http://127.0.0.1:5500',
@@ -49,6 +49,8 @@ app.use(express.json());
 // ────────────────────────────────────────────────────────────────
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/components', express.static(path.join(__dirname, 'public/components')));
+app.use('/services', express.static(path.join(__dirname, 'public/services'))); // ✅ À NE PAS OUBLIER
 
 // ────────────────────────────────────────────────────────────────
 //  API Routes
