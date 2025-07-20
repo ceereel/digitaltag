@@ -1,10 +1,10 @@
-// main.js
+// public/main.js
 
-import { getAll } from './Services/PhaseService.js';
-import { renderCards } from './Components/Cards.js';
-import { setupModal } from './Components/Modal.js';
-import { renderFilterBar } from './Components/FilterBar.js';
-import { animateJourney } from './Services/AnimationServices.js';
+import { getAll } from './services/PhaseService.js';
+import { renderCards } from './components/Cards.js';
+import { setupModal } from './components/Modal.js';
+import { renderFilterBar } from './components/FilterBar.js';
+import { animateJourney } from './services/AnimationServices.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const cardContainer = document.getElementById('cardContainer');
@@ -17,17 +17,14 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // Affiche toutes les cartes
-  const allPhases = getAll();
-  renderCards(cardContainer, allPhases);
-
-  // Active les modales
-  setupModal();
-
-  // Animation de la roadmap
-  animateJourney();
-  setInterval(animateJourney, 15000);
-
-  // Filtres dynamiques
-  renderFilterBar(filterBarContainer, filterPhrase, cardContainer);
+  try {
+    const allPhases = getAll();
+    renderCards(cardContainer, allPhases);
+    setupModal();
+    animateJourney();
+    setInterval(animateJourney, 15000);
+    renderFilterBar(filterBarContainer, filterPhrase, cardContainer);
+  } catch (error) {
+    console.error('Erreur lors du chargement de la Journey Map :', error);
+  }
 });
