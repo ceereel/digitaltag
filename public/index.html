@@ -1,31 +1,48 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PME Journey Map</title>
 
   <!-- Inter + Tailwind -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <link rel="stylesheet" href="styles.css"/>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="antialiased text-gray-700 bg-white">
+<body class="antialiased text-gray-700 bg-white font-inter">
 
-  <!-- ╭─ HEADER ───────────────────────────────────────────────╮ -->
+  <!-- HEADER -->
   <header class="text-center py-8 space-y-2">
     <h1 class="text-2xl font-bold text-[#0077d2]">PME Journey Map</h1>
-    <p  class="text-sm text-gray-600">Vue synthétique des 5 modules Digital TAG</p>
-    <div id="filterBar" class="max-w-xl mx-auto"></div>
+    <p class="text-sm text-gray-600">Vue synthétique des 5 modules Digital TAG</p>
   </header>
-  <!-- ╰────────────────────────────────────────────────────────╯ -->
 
-  <main class="px-4">
+  <!-- USE CASE FILTERS -->
+  <section class="px-4" id="usecaseSection">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" id="filterBar"></div>
+  </section>
+
+  <!-- OVERLAY FILTERED CARDS -->
+  <section id="filteredOverlay" class="fixed inset-0 z-40 hidden bg-white/80 backdrop-blur-md flex-col items-center justify-center">
+    <div class="text-center mb-6">
+      <h2 class="text-xl font-semibold text-[#0077d2]">Parcours recommandé</h2>
+      <p class="text-sm text-gray-600">Voici les étapes adaptées à votre objectif</p>
+    </div>
+    <div id="filteredCards" class="flex flex-wrap gap-6 justify-center"></div>
+    <button id="resetFilter" class="mt-6 text-sm text-[#0077d2] underline">&#x2715; Revenir à la vue complète</button>
+  </section>
+
+  <!-- MAIN -->
+  <main class="px-4 relative">
     <div id="cardContainer"></div>
+    <!-- Ligne SVG pour la roadmap -->
+    <svg id="roadmapSVG" class="absolute top-1/2 left-0 w-full h-1 z-0 hidden" viewBox="0 0 100 1" preserveAspectRatio="none">
+      <line x1="0" y1="0.5" x2="100" y2="0.5" stroke="#0077d2" stroke-width="0.2" stroke-dasharray="1 1" />
+    </svg>
   </main>
 
-  <!-- ── MODALE ─────────────────────────────────────────────── -->
+  <!-- MODALE -->
   <div id="modal" class="fixed inset-0 hidden bg-black/50 items-center justify-center z-50">
     <div id="modalBox" class="bg-white rounded-2xl shadow-2xl border-t-8 border-transparent w-[92%] max-w-3xl max-h-[90vh] p-8 overflow-y-auto">
       <header class="flex justify-between items-start mb-6">
@@ -33,7 +50,7 @@
           <div id="mIcon" class="text-4xl"></div>
           <div>
             <h2 id="mTitle" class="text-lg font-bold"></h2>
-            <p  id="mSub"  class="text-sm opacity-70"></p>
+            <p id="mSub" class="text-sm opacity-70"></p>
           </div>
         </div>
         <button id="closeBtn" class="text-3xl font-bold opacity-60 hover:opacity-100">&times;</button>
@@ -42,6 +59,8 @@
     </div>
   </div>
 
-  <script type="module" src="main.js"></script>
+  <!-- SCRIPTS -->
+  <script type="module" src="Components/auth.js"></script>
+  <script type="module" src="./main.js"></script>
 </body>
 </html>

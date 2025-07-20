@@ -1,82 +1,120 @@
-import { buildSequence } from '../Services/GoalService.js';
-import { renderCards }   from './Cards.js';
+import { renderCards } from './Cards.js';
+import { getAll } from '../Services/PhaseService.js';
+import { animateJourney } from '../Services/AnimationServices.js';
 
-/* Suggestions prédéfinies */
-const QUICK = [
-  'Je veux évaluer ma maturité digitale',
-  'Je veux me comparer à mon secteur',
-  'Je veux définir une feuille de route',
-  'Je veux avoir des recommandations',
-  'Je veux piloter mes KPIs'
+const useCases = [
+  {
+    id: 1,
+    title: 'Du diagnostic à la planification stratégique',
+    objective: 'Structurer une transformation numérique de manière concrète',
+    modules: [1, 2, 3, 5],
+    user: 'Direction d’une PME souhaitant cadrer sa stratégie digitale sur 12 mois.'
+  },
+  {
+    id: 2,
+    title: 'Appui à la décision dans un environnement incertain',
+    objective: 'Décider par où commencer malgré un manque de clarté',
+    modules: [1, 4, 3, 5],
+    user: 'Chef de projet numérique sans expertise digitale, en attente de validation managériale.'
+  },
+  {
+    id: 3,
+    title: 'Comparaison sectorielle pour justifier des investissements',
+    objective: 'Produire un argumentaire pour convaincre la direction ou un investisseur',
+    modules: [1, 2, 5],
+    user: 'Responsable innovation cherchant à justifier un budget.'
+  },
+  {
+    id: 4,
+    title: 'Atelier collaboratif avec accompagnement intelligent',
+    objective: 'Faciliter un atelier de transformation avec plusieurs parties prenantes',
+    modules: [3, 4, 5],
+    user: 'Coach externe ou responsable qualité animant une session avec une équipe de direction.'
+  },
+  {
+    id: 5,
+    title: 'Révision périodique et suivi agile',
+    objective: 'Adapter en continu les actions à l’évolution de l’organisation',
+    modules: [1, 3, 4, 5],
+    user: 'PME souhaitant intégrer la plateforme dans son pilotage semestriel.'
+  },
+  {
+    id: 6,
+    title: 'Assistance ponctuelle et construction progressive',
+    objective: 'Répondre à des questions ciblées au fil de l’eau, et construire le canevas progressivement',
+    modules: [4, 3],
+    user: 'Chef d’équipe opérationnel ou responsable RH souhaitant structurer quelques actions numériques concrètes.'
+  }
 ];
 
-export function renderFilterBar(wrapperEl, cardRoot){
+export function renderFilterBar(container, phraseEl, cardsContainer) {
+  const section = document.createElement('section');
+  section.className = 'usecase-section';
 
-  /* ---------- Mark-up ---------- */
-  wrapperEl.innerHTML = `
-    <div class="filter-wrap">
-      <input id="goalInput" type="text" class="filter-input"
-             placeholder="Tapez votre objectif (max. 2) et appuyez sur Entrée…"/>
-    </div>
-    <div id="chipsBox" class="mt-3 flex flex-wrap justify-center gap-2">
-      ${QUICK.map(q=>`<span class="suggestion-chip">${q}</span>`).join('')}
-    </div>
-    <p id="notice" class="mt-2 text-xs text-gray-500 text-center hidden">
-      (Vous avez déjà sélectionné 2 objectifs)
-    </p>
-  `;
+  const header = document.createElement('h2');
+  header.textContent = 'Choisissez un cas d’usage';
+  header.className = 'text-lg font-semibold text-center text-[#0077d2] mb-4';
+  section.appendChild(header);
 
-  const input   = wrapperEl.querySelector('#goalInput');
-  const chips   = wrapperEl.querySelectorAll('.suggestion-chip');
-  const notice  = wrapperEl.querySelector('#notice');
+  const grid = document.createElement('div');
+  grid.className = 'usecase-grid';
 
-  /* ---------- State ---------- */
-  const activeGoals = [];           // tableau de chaînes (max 2)
+  useCases.forEach(uc => {
+    const card = document.createElement('div');
+    card.className = 'usecase-card';
 
-  /* ---------- Internal ---------- */
-  function refresh(){
-    const seq = buildSequence(activeGoals);
-    renderCards(cardRoot, seq);
+    const title = document.createElement('h3');
+    title.textContent = uc.title;
+    card.appendChild(title);
 
-    chips.forEach(c=>{
-      c.classList.toggle('ring-2', activeGoals.includes(c.textContent));
-    });
-    notice.classList.toggle('hidden', activeGoals.length < 2);
-  }
+    const objective = document.createElement('p');
+    objective.textContent = uc.objective;
+    card.appendChild(objective);
 
-  function addGoal(text){
-    if(!text.trim()) return;
-    if(activeGoals.includes(text)) return;       // déjà présent
-    if(activeGoals.length === 2){
-      /* on supprime le plus ancien pour en laisser toujours 2 */
-      activeGoals.shift();
-    }
-    activeGoals.push(text);
-    input.value = '';
-    refresh();
-  }
-
-  /* ---------- Events ---------- */
-  input.addEventListener('keydown', e=>{
-    if(e.key==='Enter'){
-      e.preventDefault();
-      addGoal(input.value);
-    }
-  });
-
-  chips.forEach(chip=>{
-    chip.addEventListener('click', ()=>{
-      if(activeGoals.includes(chip.textContent)){
-        /* toggle off */
-        const idx = activeGoals.indexOf(chip.textContent);
-        activeGoals.splice(idx,1);
-      }else{
-        addGoal(chip.textContent);
+    const sequence = document.createElement('div');
+    sequence.className = 'module-sequence';
+    uc.modules.forEach((id, i) => {
+      const phase = getAll().find(p => p.id === id);
+      const span = document.createElement('span');
+      span.textContent = phase?.phaseLabel || `Module ${id}`;
+      sequence.appendChild(span);
+      if (i < uc.modules.length - 1) {
+        const arrow = document.createElement('span');
+        arrow.textContent = '→';
+        arrow.className = 'arrow';
+        sequence.appendChild(arrow);
       }
-      refresh();
     });
+    card.appendChild(sequence);
+
+    const button = document.createElement('button');
+    button.textContent = 'Suivre ce parcours';
+    button.addEventListener('click', () => {
+      const suggestedPhases = getAll().filter(p => uc.modules.includes(p.id));
+      suggestedPhases.sort((a, b) => uc.modules.indexOf(a.id) - uc.modules.indexOf(b.id));
+
+      phraseEl.textContent = `Parcours sélectionné : ${uc.title}`;
+
+      document.getElementById('filteredOverlay').classList.remove('hidden');
+      renderCards(cardsContainer, suggestedPhases);
+      animateJourney();
+    });
+    card.appendChild(button);
+
+    grid.appendChild(card);
   });
 
-  /* Affichage initial (toutes les cartes) */
-  refresh();
+  section.appendChild(grid);
+  container.appendChild(section);
+
+  // Quitter la vue filtrée
+  const overlay = document.getElementById('filteredOverlay');
+  overlay.addEventListener('click', e => {
+    if (e.target.id === 'filteredOverlay') {
+      overlay.classList.add('hidden');
+      phraseEl.textContent = '';
+      renderCards(cardsContainer);
+      animateJourney();
+    }
+  });
 }

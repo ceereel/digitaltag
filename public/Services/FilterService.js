@@ -1,60 +1,61 @@
-/* ------------------------------------------------------------------
-   FilterService
-   - centralise les règles de filtrage disponibles
-   - renvoie la liste des phases à conserver selon le filtre choisi
------------------------------------------------------------------- */
-
-import { getAll } from './PhaseService.js';
-
-/**  Les filtres proposés dans la barre.
- *   id  : identifiant technique
- *   lbl : libellé affiché
- *   test: fonction qui reçoit (phase) et renvoie true/false
- */
-const FILTERS = [
+// Définit les 6 use cases et fournit la logique de mapping
+export const useCases = [
   {
-    id  : 'all',
-    lbl : 'Toutes',
-    test: () => true
+    id: 1,
+    label: "Du diagnostic à la planification stratégique",
+    objective: "Structurer une transformation numérique de manière concrète",
+    phases: [1,2,3,5]
   },
   {
-    id  : 'diagnostic',
-    lbl : 'Diagnostic',
-    test: p => p.id === 1
+    id: 2,
+    label: "Appui à la décision dans un environnement incertain",
+    objective: "Décider par où commencer malgré un manque de clarté",
+    phases: [1,4,3,5]
   },
   {
-    id  : 'benchmark',
-    lbl : 'Benchmark',
-    test: p => p.id === 2
+    id: 3,
+    label: "Comparaison sectorielle pour justifier des investissements",
+    objective: "Produire un argumentaire pour convaincre la direction ou un investisseur",
+    phases: [1,2,5]
   },
   {
-    id  : 'structuration',
-    lbl : 'Structuration',
-    test: p => p.id === 3
+    id: 4,
+    label: "Atelier collaboratif avec accompagnement intelligent",
+    objective: "Faciliter un atelier de transformation avec plusieurs parties prenantes",
+    phases: [3,4,5]
   },
   {
-    id  : 'conseil',
-    lbl : 'IA & Conseil',
-    test: p => p.id === 4
+    id: 5,
+    label: "Révision périodique et suivi agile",
+    objective: "Adapter en continu les actions à l’évolution de l’organisation",
+    phases: [1,3,4,5]
   },
   {
-    id  : 'roadmap',
-    lbl : 'Feuille de route',
-    test: p => p.id === 5
+    id: 6,
+    label: "Assistance ponctuelle et construction progressive",
+    objective: "Construire le canevas pas-à-pas en sollicitant l’agent virtuel",
+    phases: [4,3]
   }
 ];
 
-/* ------------------------------------------------------------------ */
-/*  API                                                               */
-/* ------------------------------------------------------------------ */
-
-/** Liste complète des filtres pour la UI */
-export function getFilters () {
-  return FILTERS.map(f => ({ id: f.id, lbl: f.lbl }));
+/**
+ * Renvoie la phrase « Je veux … et … » pour les use cases sélectionnés
+ */
+export function getPhraseForUseCases(selectedIds) {
+  const objs = useCases
+    .filter(uc => selectedIds.includes(uc.id))
+    .map(uc => uc.objective);
+  if (objs.length === 0) return "";
+  return `Je veux ${objs.join(" et ")}.`;
 }
 
-/** Retourne les phases qui passent le filtre */
-export function applyFilter (filterId) {
-  const f = FILTERS.find(x => x.id === filterId) ?? FILTERS[0]; // défaut = all
-  return getAll().filter(p => f.test(p));
+/**
+ * Regroupe et ordonne les phases à afficher pour ces use cases
+ */
+export function getPhasesForUseCases(selectedIds) {
+  const phases = new Set();
+  useCases
+    .filter(uc => selectedIds.includes(uc.id))
+    .forEach(uc => uc.phases.forEach(p => phases.add(p)));
+  return [...phases].sort((a,b)=>a-b);
 }

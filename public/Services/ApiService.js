@@ -15,4 +15,7 @@ export async function sendEvaluation(payload) {
     const message = await response.text();
     throw new Error(`API error: ${response.status} – ${message}`);
   }
-}
+} 
+
+// ✅ Vérification console (facultatif pour DevTools)
+window.sendEvaluation = sendEvaluation;
