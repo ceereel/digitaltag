@@ -1,36 +1,35 @@
-/* Anime la timeline _si_ elle existe dans le DOM ----------------------- */
+export function animateJourney() {
+  const dots   = document.querySelectorAll('.timeline-dot');
+  const lines  = document.querySelectorAll('.connection-line');
+  const gpBar  = document.getElementById('globalProgress');
+  const pctTxt = document.getElementById('progressText');
+  const icon   = document.getElementById('currentPhaseIcon');
+  const label  = document.getElementById('currentPhaseText');
+  const icons  = ['🧭','📊','🧩','🤖','📍'];
 
-let active = false;
-
-const dots  = document.querySelectorAll('.timeline-dot');
-const lines = document.querySelectorAll('.connection-line');
-const bar   = document.getElementById('globalProgress');
-const pct   = document.getElementById('progressText');
-const cLine = document.getElementById('cyclicLine');
-const cArr  = document.getElementById('cyclicArrow');
-
-if (dots.length && lines.length && bar && pct) active = true;
-
-export function animateJourney () {
-  if (!active) return;                   // rien à faire
+  if (!dots.length || !gpBar) return;
 
   dots.forEach(d => d.classList.remove('active'));
   lines.forEach(l => l.classList.remove('animate'));
 
   let delay = 0;
-  dots.forEach((dot, i) => {
+  icons.forEach((ico, i) => {
     setTimeout(() => {
-      dot.classList.add('active');
-      lines[i] && lines[i].classList.add('animate');
+      dots[i].classList.add('active');
+      if (lines[i]) setTimeout(() => lines[i].classList.add('animate'), 300);
 
-      const ratio = (i + 1) / dots.length * 100;
-      bar.style.width = ratio + '%';
-      pct.textContent = Math.round(ratio) + '%';
-
-      if (i === dots.length - 1 && cLine && cArr) {
-        cLine.classList.add('animate');
-        cArr .classList.add('animate');
+      if (i === icons.length - 1) {
+        const cyclicLine  = document.getElementById('cyclicLine');
+        const cyclicArrow = document.getElementById('cyclicArrow');
+        cyclicLine?.classList.add('animate');
+        cyclicArrow?.classList.add('animate');
       }
+
+      const pct = ((i + 1) / icons.length) * 100;
+      gpBar.style.width    = `${pct}%`;
+      pctTxt.textContent   = `${Math.round(pct)}%`;
+      icon.textContent     = ico;
+      label.textContent    = `Phase ${i + 1}`;
     }, delay);
     delay += 1100;
   });

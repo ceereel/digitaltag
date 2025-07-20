@@ -2,6 +2,7 @@
 // ────────────────────────────────────────────────────────────────
 //  Feedback API + Frontend static – Digital TAG (SQLite)
 // ────────────────────────────────────────────────────────────────
+
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -21,11 +22,11 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// CORS autorisé depuis le frontend Render
+// CORS autorisé depuis le frontend Render ou localhost
 const ALLOWED_ORIGINS = [
   'http://localhost:4000',
-  'http://localhost:4000',
-  'https://digitaltag-api.onrender.com'
+  'http://127.0.0.1:5500',
+  'https://digitaltag.onrender.com'
 ];
 
 app.use(cors({
@@ -43,41 +44,59 @@ app.use(cors({
 
 app.use(express.json());
 
-// 🔁 Sert les fichiers statiques depuis /public
+// ────────────────────────────────────────────────────────────────
+//  Serve fichiers statiques
+// ────────────────────────────────────────────────────────────────
+
+// Sert tous les fichiers dans /public (HTML, main.js, styles.css)
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Sert aussi les sous-dossiers comme /components ou /services
+app.use('/components', express.static(path.join(__dirname, 'public/components')));
+app.use('/services', express.static(path.join(__dirname, 'public/services')));
 
 // ────────────────────────────────────────────────────────────────
 //  API Routes
 // ────────────────────────────────────────────────────────────────
 
-// GET /feedback (simple test)
+// GET /feedback : simple test
 app.get('/feedback', (req, res) => {
   res.send('✅ API en ligne – POST uniquement');
 });
 
-// POST /feedback (sauvegarde une évaluation)
+// POST /feedback : Sauvegarde une appréciation utilisateur
 app.post('/feedback', (req, res) => {
-  const { org, sect, mail, module, rating, comment = '—' } = req.body;
+  const {
+    organisation,
+    sector,
+    email,
+    module,
+    phase,
+    clarity,
+    usefulness,
+    visualAppeal,
+    comment = '—'
+  } = req.body;
 
-  if (!org || !sect || !mail || !module || !rating) {
+  if (!organisation || !sector || !email || !module || !phase || !clarity || !usefulness || !visualAppeal) {
     return res.status(400).send("Champs requis manquants");
   }
 
-  const stmt = db.prepare(`
-    INSERT INTO evaluations (organisation, sector, email, module, phase, rating, comment)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `);
-
   try {
-    stmt.run(org, sect, mail, module, module.split(' – ')[0], rating, comment);
+    const stmt = db.prepare(`
+      INSERT INTO evaluations (organisation, sector, email, module, phase, clarity, usefulness, visual_appeal, comment)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    stmt.run(organisation, sector, email, module, phase, clarity, usefulness, visualAppeal, comment);
     res.sendStatus(200);
   } catch (err) {
-    console.error("Erreur SQLite :", err.message);
-    res.status(500).send("Erreur d'enregistrement");
+    console.error("❌ Erreur SQLite :", err.message);
+    res.status(500).send("Erreur lors de l'enregistrement");
   }
 });
 
-// GET /admin/feedback (liste protégée)
+// GET /admin/feedback : Liste protégée
 app.get('/admin/feedback', (req, res) => {
   const token = req.headers['x-admin-token'];
   if (token !== ADMIN_TOKEN) return res.status(403).send("Accès refusé – jeton invalide");
@@ -86,11 +105,11 @@ app.get('/admin/feedback', (req, res) => {
     const rows = db.prepare('SELECT * FROM evaluations ORDER BY created_at DESC').all();
     res.json(rows);
   } catch (err) {
-    res.status(500).send("Erreur lecture SQLite");
+    res.status(500).send("Erreur lors de la lecture de la base");
   }
 });
 
-// GET /admin/pdf (export PDF)
+// GET /admin/pdf : Export PDF des évaluations
 app.get('/admin/pdf', (req, res) => {
   const token = req.headers['x-admin-token'];
   if (token !== ADMIN_TOKEN) return res.status(403).send("Accès refusé – jeton invalide");
@@ -106,7 +125,7 @@ app.get('/admin/pdf', (req, res) => {
   }
 });
 
-// Catch-all → redirige vers index.html (cas SPA)
+// Catch-all pour rediriger vers index.html (SPA)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
