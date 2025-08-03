@@ -3,7 +3,7 @@
 import { getAll } from './services/PhaseService.js';
 import { renderCards } from './components/Cards.js';
 import { setupModal } from './components/Modal.js';
-import { renderFilterBar } from './components/FilterBar.js';
+import { renderUsecaseFilter } from './services/UsecaseFilter.js';
 import { animateJourney } from './services/AnimationServices.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -18,12 +18,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   try {
-    const allPhases = getAll();
-    renderCards(cardContainer, allPhases);
+    // NE PAS afficher les cartes à l'ouverture
+    cardContainer.innerHTML = `
+      <p class="text-center text-gray-500 text-sm py-4">
+        Sélectionnez un besoin pour afficher les modules correspondants.
+      </p>
+    `;
+
     setupModal();
     animateJourney();
     setInterval(animateJourney, 15000);
-    renderFilterBar(filterBarContainer, filterPhrase, cardContainer);
+
+    // Affichage des blocs de services proposés
+    renderUsecaseFilter(filterBarContainer, filterPhrase);
   } catch (error) {
     console.error('Erreur lors du chargement de la Journey Map :', error);
   }

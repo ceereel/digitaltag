@@ -2,8 +2,8 @@ import { getAll } from '../Services/PhaseService.js';
 import { openModal } from './Modal.js';
 
 const PALETTE = {
-  1: 'from-green-600 to-green-800 border-green-400/30',
-  2: 'from-blue-600 to-blue-800 border-blue-400/30',
+  1: 'from-blue-600 to-blue-800 border-blue-400/30',
+  2: 'from-green-600 to-green-800 border-green-400/30',
   3: 'from-purple-600 to-purple-800 border-purple-400/30',
   4: 'from-orange-600 to-orange-800 border-orange-400/30',
   5: 'from-red-600 to-red-800 border-red-400/30'

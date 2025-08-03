@@ -26,7 +26,8 @@ const __dirname = path.dirname(__filename);
 const ALLOWED_ORIGINS = [
   'http://localhost:4000',
   'http://127.0.0.1:5500',
-  'https://digitaltag.onrender.com'
+  'http://localhost:3000',
+  'https://digitaltag-api.onrender.com'
 ];
 
 app.use(cors({
@@ -50,7 +51,7 @@ app.use(express.json());
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/components', express.static(path.join(__dirname, 'public/components')));
-app.use('/services', express.static(path.join(__dirname, 'public/services'))); // ✅ À NE PAS OUBLIER
+app.use('/services', express.static(path.join(__dirname, 'public/services')));
 
 // ────────────────────────────────────────────────────────────────
 //  API Routes
@@ -61,29 +62,49 @@ app.get('/feedback', (req, res) => {
 });
 
 app.post('/feedback', (req, res) => {
+  console.log("📥 Données reçues :", req.body);
+
   const {
     organisation,
     sector,
     email,
     module,
     phase,
-    clarity,
-    usefulness,
-    visualAppeal,
+    understanding = null,
+    clarity = null,
+    relevance = null,
+    navigation = null,
+    reuse = null,
     comment = '—'
   } = req.body;
 
-  if (!organisation || !sector || !email || !module || !phase || !clarity || !usefulness || !visualAppeal) {
+  // Vérifie la présence des champs obligatoires
+  if (!organisation || !sector || !email || !module || !phase) {
     return res.status(400).send("Champs requis manquants");
   }
 
   try {
     const stmt = db.prepare(`
-      INSERT INTO evaluations (organisation, sector, email, module, phase, clarity, usefulness, visual_appeal, comment)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO evaluations (
+        organisation, sector, email, module, phase,
+        understanding, clarity, relevance, navigation, reuse, comment
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
-    stmt.run(organisation, sector, email, module, phase, clarity, usefulness, visualAppeal, comment);
+    stmt.run(
+      organisation,
+      sector,
+      email,
+      module,
+      phase,
+      understanding,
+      clarity,
+      relevance,
+      navigation,
+      reuse,
+      comment
+    );
+
     res.sendStatus(200);
   } catch (err) {
     console.error("❌ Erreur SQLite :", err.message);
@@ -118,7 +139,24 @@ app.get('/admin/pdf', (req, res) => {
   }
 });
 
-// Rediriger tout ce qui reste vers index.html (SPA)
+// (Optionnel) route CSV si tu ajoutes l'export
+app.get('/admin/csv', (req, res) => {
+  const token = req.query.token;
+  if (token !== ADMIN_TOKEN) return res.status(403).send("Accès refusé – jeton invalide");
+
+  try {
+    const rows = db.prepare('SELECT * FROM evaluations ORDER BY created_at DESC').all();
+    const header = Object.keys(rows[0]).join(',');
+    const csv = rows.map(r => Object.values(r).join(',')).join('\n');
+    res.setHeader('Content-Disposition', 'attachment; filename="feedbacks.csv"');
+    res.setHeader('Content-Type', 'text/csv');
+    res.send(header + '\n' + csv);
+  } catch (err) {
+    res.status(500).send("Erreur export CSV");
+  }
+});
+
+// Rediriger tout le reste vers index.html (SPA)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
@@ -126,6 +164,7 @@ app.get('*', (req, res) => {
 // ────────────────────────────────────────────────────────────────
 //  Lancer le serveur
 // ────────────────────────────────────────────────────────────────
+
 app.listen(PORT, () => {
   console.log(`✅ Feedback API + Frontend sur http://localhost:${PORT}`);
 });

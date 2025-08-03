@@ -16,9 +16,14 @@
   <header class="text-center py-8 space-y-2">
     <h1 class="text-2xl font-bold text-[#0077d2]">PME Journey Map</h1>
     <p class="text-sm text-gray-600">Vue synthétique des 5 modules Digital TAG</p>
+    <button id="logoutBtn" title="Changer d'utilisateur" class="absolute top-4 right-4 text-gray-400 hover:text-[#0077d2] text-xl">
+      🔒
+    </button>
   </header>
 
   <!-- USE CASE FILTERS -->
+  <section id="filterSection" class="modern-filter"></section>
+  <p id="filterPhrase"></p>
   <section class="px-4" id="usecaseSection">
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" id="filterBar"></div>
   </section>
@@ -58,7 +63,23 @@
     </div>
   </div>
 
-  <!-- ✅ SCRIPTS – attention aux chemins en production -->
+  <!-- FORMULAIRE FEEDBACK HORS FLOW -->
+  <form id="feedbackForm">
+    <input name="organisation" required>
+    <input name="sector" required>
+    <input name="email" type="email" required>
+    <input name="module" required>
+    <input name="phase" required>
+    <input name="understanding">
+    <input name="clarity">
+    <input name="relevance">
+    <input name="navigation">
+    <input name="reuse">
+    <textarea name="comment"></textarea>
+    <button type="submit">Envoyer</button>
+  </form>
+
+  <!-- ✅ SCRIPTS -->
   <script type="module" src="/main.js"></script>
   <script type="module" src="/components/auth.js"></script>
 </body>
