@@ -4,7 +4,6 @@
   --bg: #ffffff;
 }
 
-/* ───── STRUCTURE GÉNÉRALE ───── */
 body {
   font-family: 'Inter', sans-serif;
   background-color: var(--bg);
@@ -12,34 +11,11 @@ body {
   margin: 0;
   padding: 0;
 }
+
 h1, h2, h3 {
   margin: 0;
 }
 
-/* ───── BOUTONS OBJECTIFS ───── */
-.filter-wrap {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  justify-content: center;
-  margin-top: 1rem;
-}
-.chip {
-  padding: 0.45rem 1rem;
-  border: 1.5px solid var(--accent);
-  border-radius: 9999px;
-  font-size: 0.85rem;
-  color: var(--accent);
-  background: transparent;
-  cursor: pointer;
-  transition: all 0.25s;
-}
-.chip:hover, .chip-active {
-  background: var(--accent);
-  color: #fff;
-}
-
-/* ───── PHRASE DYNAMIQUE ───── */
 #filterPhrase {
   min-height: 1.5rem;
   margin-top: 0.75rem;
@@ -48,7 +24,77 @@ h1, h2, h3 {
   color: #4b5563;
 }
 
-/* ───── CARTES DE PHASES ───── */
+.modern-filter {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem 1rem;
+  background-color: #fff;
+}
+
+.modern-filter h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+}
+
+.modern-filter select {
+  min-width: 240px;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.95rem;
+  color: var(--text-body);
+  background-color: #f9fafb;
+  transition: border-color 0.3s ease;
+}
+
+.modern-filter select:focus {
+  outline: none;
+  border-color: var(--accent);
+  background-color: #fff;
+}
+
+.modern-filter button {
+  font-size: 0.9rem;
+  padding: 0.5rem 1.2rem;
+  background-color: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.modern-filter button:hover {
+  background-color: #005fa3;
+  transform: translateY(-1px);
+}
+
+.modern-filter span {
+  font-weight: 500;
+  color: #374151;
+  font-size: 1rem;
+}
+
+.modern-filter .add-second {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: var(--accent);
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.25s;
+}
+
+.modern-filter .add-second:hover {
+  color: #005fa3;
+}
+
 #cardContainer {
   display: flex;
   flex-wrap: wrap;
@@ -56,6 +102,7 @@ h1, h2, h3 {
   justify-content: center;
   padding: 2rem;
 }
+
 .journey-step {
   width: 260px;
   background: #fff;
@@ -69,25 +116,31 @@ h1, h2, h3 {
   padding: 1rem;
   position: relative;
 }
+
 .journey-step:hover {
   transform: translateY(-6px) scale(1.04);
   box-shadow: 0 18px 35px rgba(0,0,0,0.18);
 }
+
 .journey-step .phase-header {
   text-align: center;
   margin-bottom: 0.75rem;
 }
+
 .journey-step .phase-icon {
   font-size: 2.4rem;
   margin-bottom: 0.4rem;
 }
+
 .journey-step .phase-title {
   font-weight: 600;
 }
+
 .journey-step .phase-sub {
   font-size: 0.85rem;
   color: var(--text-body);
 }
+
 .journey-step .business-goal {
   margin-top: 0.75rem;
   padding: 0.5rem 0.7rem;
@@ -98,7 +151,6 @@ h1, h2, h3 {
   color: var(--accent);
 }
 
-/* ───── RUBAN ÉTAPE X ───── */
 .journey-step .badge {
   position: absolute;
   top: 0.6rem;
@@ -112,60 +164,6 @@ h1, h2, h3 {
   z-index: 10;
 }
 
-/* ───── CARTES DE USE CASE ───── */
-.usecase-card {
-  background: #ffffff;
-  border: 1px solid #d0e4f6;
-  border-left: 4px solid var(--accent);
-  border-radius: 12px;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.04);
-  transition: all 0.2s ease;
-}
-.usecase-card:hover {
-  box-shadow: 0 8px 20px rgba(0,0,0,0.07);
-  transform: translateY(-2px);
-  border-color: var(--accent);
-}
-.usecase-card h3 {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--accent);
-  margin-bottom: 0.25rem;
-}
-.usecase-card p {
-  font-size: 0.875rem;
-  color: var(--text-body);
-  margin-bottom: 0.5rem;
-}
-.usecase-card .module-sequence {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1.1rem;
-  color: #1f2937;
-  margin-top: 0.5rem;
-}
-.usecase-card .module-sequence .arrow {
-  font-size: 0.9rem;
-  color: #9ca3af;
-}
-.usecase-card button {
-  margin-top: 1rem;
-  font-size: 0.85rem;
-  color: var(--accent);
-  font-weight: 500;
-  background: none;
-  border: none;
-  cursor: pointer;
-  text-decoration: underline;
-  align-self: flex-start;
-}
-
-/* ───── OVERLAY PARCOURS ───── */
 #filteredOverlay {
   min-height: 100vh;
   align-items: center;
@@ -179,9 +177,11 @@ h1, h2, h3 {
   flex-direction: column;
   overflow-y: auto;
 }
+
 #filteredOverlay.hidden {
   display: none;
 }
+
 #filteredCards {
   display: flex;
   flex-wrap: wrap;
@@ -192,7 +192,6 @@ h1, h2, h3 {
   margin: 0 auto;
 }
 
-/* ───── BOUTON FERMER PARCOURS ───── */
 #closeOverlayBtn {
   background: var(--accent);
   color: white;
@@ -204,13 +203,20 @@ h1, h2, h3 {
   border: none;
   cursor: pointer;
 }
+
 #closeOverlayBtn:hover {
   background: #005fa3;
 }
 
-/* ───── MODALE ───── */
-.modal.hidden { opacity: 0; pointer-events: none; }
-.modal.show   { opacity: 1; pointer-events: auto; transition: opacity 0.25s; }
+.modal.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.modal.show {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.25s;
+}
 .modal-box {
   transform: translateY(1.2rem);
   opacity: 0;
@@ -221,7 +227,6 @@ h1, h2, h3 {
   opacity: 1;
 }
 
-/* ───── SVG Roadmap (masqué par défaut) ───── */
 #roadmapSVG.visible {
   display: block !important;
 }
