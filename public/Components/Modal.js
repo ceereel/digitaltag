@@ -35,7 +35,6 @@ export function openModal(id) {
   modal.classList.add('flex');
   document.body.style.overflow = 'hidden';
 
-  // Feedback
   setTimeout(() => {
     const feedbackBtn = document.getElementById('showFeedbackBtn');
     if (feedbackBtn) {
@@ -46,44 +45,44 @@ export function openModal(id) {
           <div class="space-y-4">
             <div>
               <label class="block text-sm font-medium">Compréhension du rôle de ce module</label>
-              <input type="range" min="1" max="5" class="w-full accent-[#0077d2]">
+              <input id="understanding" type="range" min="1" max="5" class="w-full accent-[#0077d2]">
             </div>
 
             <div>
               <label class="block text-sm font-medium">Clarté de la séquence proposée</label>
-              <select class="w-full text-sm p-2 border border-gray-300 rounded">
-                <option>Oui</option>
-                <option>Non</option>
-                <option>Moyennement</option>
+              <select id="clarity" class="w-full text-sm p-2 border border-gray-300 rounded">
+                <option value="Oui">Oui</option>
+                <option value="Non">Non</option>
+                <option value="Moyennement">Moyennement</option>
               </select>
             </div>
 
             <div>
               <label class="block text-sm font-medium">Pertinence pour vos besoins</label>
-              <input type="range" min="1" max="5" class="w-full accent-[#0077d2]">
+              <input id="relevance" type="range" min="1" max="5" class="w-full accent-[#0077d2]">
             </div>
 
             <div>
               <label class="block text-sm font-medium">La carte vous aide-t-elle à vous repérer ?</label>
-              <select class="w-full text-sm p-2 border border-gray-300 rounded">
-                <option>Oui</option>
-                <option>Non</option>
-                <option>Partiellement</option>
+              <select id="navigation" class="w-full text-sm p-2 border border-gray-300 rounded">
+                <option value="Oui">Oui</option>
+                <option value="Non">Non</option>
+                <option value="Partiellement">Partiellement</option>
               </select>
             </div>
 
             <div>
               <label class="block text-sm font-medium">Souhaitez-vous réutiliser cette carte ?</label>
-              <select class="w-full text-sm p-2 border border-gray-300 rounded">
-                <option>Oui</option>
-                <option>Non</option>
-                <option>Peut-être</option>
+              <select id="reuse" class="w-full text-sm p-2 border border-gray-300 rounded">
+                <option value="Oui">Oui</option>
+                <option value="Non">Non</option>
+                <option value="Peut-être">Peut-être</option>
               </select>
             </div>
 
             <div>
               <label class="block text-sm font-medium">Commentaire libre</label>
-              <textarea rows="3" class="w-full text-sm p-2 border border-gray-300 rounded" placeholder="Ex. : Ce module est utile, mais..."></textarea>
+              <textarea id="comment" rows="3" class="w-full text-sm p-2 border border-gray-300 rounded" placeholder="Ex. : Ce module est utile, mais..."></textarea>
             </div>
 
             <button id="submitFeedbackBtn" class="mt-4 bg-[#0077d2] text-white px-4 py-2 rounded hover:bg-[#005fa3] text-sm">
@@ -95,8 +94,38 @@ export function openModal(id) {
         setTimeout(() => {
           const submitBtn = document.getElementById('submitFeedbackBtn');
           if (submitBtn) {
-            submitBtn.addEventListener('click', () => {
-              closeModal();
+            submitBtn.addEventListener('click', async () => {
+              const payload = {
+                organisation: 'He-Arc', // remplace par champ dynamique plus tard
+                sector: 'Pédagogie',    // idem
+                email: 'test@he-arc.ch', // idem
+                module: p.moduleLabel,
+                phase: p.phaseLabel,
+                understanding: document.getElementById('understanding').value,
+                clarity: document.getElementById('clarity').value,
+                relevance: document.getElementById('relevance').value,
+                navigation: document.getElementById('navigation').value,
+                reuse: document.getElementById('reuse').value,
+                comment: document.getElementById('comment').value
+              };
+
+              try {
+                const res = await fetch('/feedback', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                  alert("Merci pour votre retour !");
+                  closeModal();
+                } else {
+                  alert("Erreur lors de l'envoi du feedback.");
+                }
+              } catch (err) {
+                console.error("❌ Erreur fetch :", err);
+                alert("Une erreur est survenue.");
+              }
             });
           }
         }, 100);
