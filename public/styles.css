@@ -1,232 +1,317 @@
-:root {
-  --accent: #0077d2;
-  --text-body: #4b5563;
-  --bg: #ffffff;
-}
-
-body {
-  font-family: 'Inter', sans-serif;
-  background-color: var(--bg);
-  color: var(--text-body);
-  margin: 0;
-  padding: 0;
-}
-
-h1, h2, h3 {
-  margin: 0;
-}
-
-#filterPhrase {
-  min-height: 1.5rem;
-  margin-top: 0.75rem;
-  text-align: center;
-  font-size: 0.9rem;
-  color: #4b5563;
-}
-
-.modern-filter {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 2rem 1rem;
-  background-color: #fff;
-}
-
-.modern-filter h2 {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: var(--accent);
-  margin-bottom: 1.5rem;
-}
-
-.modern-filter select {
-  min-width: 240px;
-  padding: 0.6rem 1rem;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  font-size: 0.95rem;
-  color: var(--text-body);
-  background-color: #f9fafb;
-  transition: border-color 0.3s ease;
-}
-
-.modern-filter select:focus {
-  outline: none;
-  border-color: var(--accent);
-  background-color: #fff;
-}
-
-.modern-filter button {
-  font-size: 0.9rem;
-  padding: 0.5rem 1.2rem;
-  background-color: var(--accent);
-  color: #fff;
-  border: none;
-  border-radius: 9999px;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  transition: background-color 0.3s ease, transform 0.2s;
-}
-
-.modern-filter button:hover {
-  background-color: #005fa3;
-  transform: translateY(-1px);
-}
-
-.modern-filter span {
-  font-weight: 500;
-  color: #374151;
-  font-size: 1rem;
-}
-
-.modern-filter .add-second {
-  margin-top: 1rem;
-  font-size: 0.85rem;
-  color: var(--accent);
-  text-decoration: underline;
-  cursor: pointer;
-  transition: color 0.25s;
-}
-
-.modern-filter .add-second:hover {
-  color: #005fa3;
-}
-
-#cardContainer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-  justify-content: center;
-  padding: 2rem;
-}
-
-.journey-step {
-  width: 260px;
-  background: #fff;
-  border: 2px solid var(--accent);
-  border-radius: 12px;
-  box-shadow: 0 6px 22px -8px rgba(0,0,0,0.12);
-  cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-  position: relative;
-}
-
-.journey-step:hover {
-  transform: translateY(-6px) scale(1.04);
-  box-shadow: 0 18px 35px rgba(0,0,0,0.18);
-}
-
-.journey-step .phase-header {
-  text-align: center;
-  margin-bottom: 0.75rem;
-}
-
-.journey-step .phase-icon {
-  font-size: 2.4rem;
-  margin-bottom: 0.4rem;
-}
-
-.journey-step .phase-title {
-  font-weight: 600;
-}
-
-.journey-step .phase-sub {
-  font-size: 0.85rem;
-  color: var(--text-body);
-}
-
-.journey-step .business-goal {
-  margin-top: 0.75rem;
-  padding: 0.5rem 0.7rem;
-  border-radius: 8px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  background: rgba(0,119,210,0.1);
-  color: var(--accent);
-}
-
-.journey-step .badge {
-  position: absolute;
-  top: 0.6rem;
-  left: 0.6rem;
-  background: var(--accent);
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 4px;
-  z-index: 10;
-}
-
-#filteredOverlay {
-  min-height: 100vh;
-  align-items: center;
-  padding: 3rem 2rem;
-  position: fixed;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  z-index: 40;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-}
-
-#filteredOverlay.hidden {
-  display: none;
-}
-
-#filteredCards {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  justify-content: center;
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-#closeOverlayBtn {
-  background: var(--accent);
-  color: white;
-  font-size: 0.9rem;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-  transition: background 0.25s;
-  border: none;
-  cursor: pointer;
-}
-
-#closeOverlayBtn:hover {
-  background: #005fa3;
-}
-
-.modal.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-.modal.show {
-  opacity: 1;
-  pointer-events: auto;
-  transition: opacity 0.25s;
-}
-.modal-box {
-  transform: translateY(1.2rem);
-  opacity: 0;
-  transition: transform 0.35s, opacity 0.35s;
-}
-.modal.show .modal-box {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-#roadmapSVG.visible {
-  display: block !important;
-}
+/* =========================
+   Variables de base
+   ========================= */
+   :root{
+    --accent:#0077d2;
+    --accent-light:#e8f2fc;
+    --text:#4b5563;
+    --text-dark:#0f172a;
+    --bg:#f9fafb;
+    --paper:#ffffff;
+    --radius:16px;
+    --shadow-lg:0 24px 60px rgba(2,6,23,.22);
+    --shadow-sm:0 1px 2px rgba(16,24,40,.06);
+  
+    /* Layout */
+    --body-max:1100px;
+    --modal-inner-max:960px;
+    --container-pad:clamp(12px,3vw,20px);
+  
+    /* Cartes (PME Journey) */
+    --card-natural-w:280px;  
+    --card-natural-h:320px;  /* Hauteur réduite */
+  }
+  
+  /* =========================
+     Reset & base
+     ========================= */
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  html{font-size:13.5px}
+  @media (max-width:1024px){html{font-size:13px}}
+  @media (max-width:640px){html{font-size:12.5px}}
+  
+  body{
+    margin:0;
+    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    color:var(--text);
+    background:var(--bg);
+    line-height:1.55;
+    overflow-x:hidden;
+    letter-spacing:.01em;
+  }
+  .hidden{display:none!important}
+  body.noscroll{overflow:hidden}
+  
+  h1,h2,h3{color:var(--text-dark);margin:0}
+  h1{letter-spacing:-.01em;font-weight:800}
+  h2,h3{letter-spacing:-.005em;font-weight:700}
+  h1{font-size:1.22rem;line-height:1.2}
+  h2{font-size:1.06rem;line-height:1.25}
+  h3{font-size:.98rem;line-height:1.3}
+  p{margin:0}
+  
+  /* Containers centrés */
+  .container,#filterWrapper{
+    max-width:var(--body-max);
+    margin-inline:auto;
+    padding-inline:var(--container-pad);
+  }
+  
+  /* =========================
+     Boutons
+     ========================= */
+  button:not(.jm-close):not(#closeBtn):not(#editUser):not(#logoutBtn):not(.journey-step),
+  .btn-soft,#userBtn,#jmBack,#validateBtn,.btn-validate{
+    appearance:none;
+    display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+    border:1.5px solid #e5e7eb;border-radius:10px;
+    background:#f9fafb;color:#374151;
+    padding:8px 12px;
+    font:600 .9rem/1 Inter,system-ui,sans-serif;
+    cursor:pointer;
+    transition:background .18s,color .18s,border-color .18s,box-shadow .18s,transform .12s;
+    text-decoration:none;
+  }
+  button:not(.jm-close):not(#closeBtn):not(#editUser):not(#logoutBtn):not(.journey-step):hover,
+  .btn-soft:hover,#userBtn:hover,#jmBack:hover,#validateBtn:hover,.btn-validate:hover{
+    background:var(--accent);border-color:var(--accent);color:#fff;
+    box-shadow:0 8px 22px rgba(0,119,210,.16);transform:translateY(-1px);
+  }
+  button.is-selected:not(.journey-step),
+  .btn-soft.is-selected,#userBtn.is-selected,#jmBack.is-selected,#validateBtn.is-selected,.btn-validate.is-selected{
+    background:var(--accent);border-color:var(--accent);color:#fff;
+  }
+  
+  /* Menu utilisateur */
+  #userDropdown{
+    background:#fff;border:1px solid #e5e7eb;border-radius:10px;
+    box-shadow:0 10px 30px rgba(2,6,23,.15);
+  }
+  #userDropdown button{
+    all:unset;display:block;width:100%;padding:8px 14px;
+    font:500 .9rem/1.2 Inter,sans-serif;color:#374151;cursor:pointer;
+  }
+  #userDropdown button:hover{background:#f3f4f6}
+  
+  /* =========================
+     Usecases
+     ========================= */
+  #filterBar{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:clamp(10px,2vw,16px);
+  }
+  #filterBar>div{
+    background:#f9fafb;border:2px solid #d1d5db;border-radius:12px;
+    padding:clamp(10px,2vw,14px);min-height:98px;color:#374151;cursor:pointer;
+    transition:transform .2s,background .2s,border-color .2s,color .2s,box-shadow .2s;
+    box-shadow:0 6px 18px rgba(0,0,0,.03);
+  }
+  #filterBar>div:hover{background:var(--accent);color:#fff;border-color:var(--accent);transform:translateY(-3px)}
+  #filterBar>div.selected{
+    background:var(--accent);border-color:var(--accent);color:#fff;
+    box-shadow:0 0 0 3px rgba(0,119,210,.28);
+  }
+  #filterBar p:first-child{font-weight:600;font-size:.92rem}
+  #filterBar p:last-child{font-size:.84rem;margin-top:.25rem}
+  
+  /* =========================
+     Modales
+     ========================= */
+  .journey-modal-overlay{
+    position:fixed;inset:0;z-index:9000;display:grid;place-items:center;
+    padding:clamp(8px,2vw,16px);background:rgba(15,23,42,.45);backdrop-filter:blur(4px);
+  }
+  #modal{z-index:10000!important}
+  body.noscroll>*:not(.journey-modal-overlay):not(#modal){pointer-events:none}
+  
+  .journey-modal{
+    width:min(var(--body-max),95vw);max-height:92dvh;background:var(--paper);
+    border-radius:var(--radius);box-shadow:var(--shadow-lg);
+    display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden;margin:0 auto;
+  }
+  .jm-header{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:10px 14px;border-bottom:1px solid #eef2f7;background:linear-gradient(to right,#fff,#f8fbff);
+  }
+  .jm-title{margin:0;font:800 clamp(1rem,1.2vw,1.15rem)/1.2 Inter,sans-serif;color:var(--text-dark)}
+  .jm-close{appearance:none;border:0;background:transparent;cursor:pointer;font-size:clamp(1.5rem,2.2vw,1.8rem);line-height:1;padding:4px 10px;border-radius:10px;color:#334155;transition:background .18s,color .18s}
+  .jm-close:hover{background:#eef6ff;color:#0f172a}
+  .jm-body{
+    background:#fff;padding:12px;overflow-y:auto;display:grid;gap:12px;justify-items:center;
+  }
+  .jm-body>*{width:100%;max-width:var(--modal-inner-max)}
+  
+  /* =========================
+     Cartes horizontales (PME Journey)
+     ========================= */
+  .cards-horizontal,#filteredCards,#routeCards{
+    --gap:12px;
+    --n:var(--cards-n,5);
+    --container-w: min(100vw, var(--body-max));
+    --slots-w: calc(var(--container-w) - 2*var(--container-pad) - (var(--n) - 1)*var(--gap));
+    --slot-w:  calc(var(--slots-w) / var(--n));
+    --scale:  clamp(.35, calc(var(--slot-w) / var(--card-natural-w)), 1);
+  
+    display:flex!important;flex-wrap:nowrap!important;
+    justify-content:center;align-items:flex-start;gap:var(--gap);
+    width:100%;max-width:var(--body-max);margin-inline:auto;overflow:visible;
+  }
+  
+  .journey-step{
+    flex:0 0 var(--slot-w) !important;
+    width:var(--card-natural-w) !important;
+    height:var(--card-natural-h) !important;
+    transform:scale(var(--scale));
+    transform-origin:top left;
+    border-radius:14px;
+    border:1px solid rgba(0,0,0,.06);
+    box-shadow:var(--shadow-sm);
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:12px;
+    transition:transform .12s, box-shadow .12s, border-color .12s;
+  }
+  .journey-step:hover{transform:translateY(-2px) scale(var(--scale));box-shadow:0 8px 22px rgba(0,0,0,.12)}
+  .journey-step.selected{outline:3px solid rgba(255,255,255,.4);border-color:rgba(255,255,255,.4);transform:translateY(-2px) scale(var(--scale))}
+  
+  /* Flèches centrées verticalement */
+  .arrow-between{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    align-self:center;
+    height:var(--card-natural-h);
+    color:var(--accent);
+  }
+  .arrow-between svg{width:22px;height:22px}
+  
+  /* =========================
+     META PILLS (dans les cartes du parcours)
+     ========================= */
+  
+  /* expose une variable d’accent selon le gradient de la carte */
+  .journey-step.from-\[\#0077d2\]{ --phase-accent:#0077d2; } /* Diagnostic */
+  .journey-step.from-\[\#ffb703\]{ --phase-accent:#ffb703; } /* Observatoire */
+  .journey-step.from-\[\#06d6a0\]{ --phase-accent:#06d6a0; } /* Canevas */
+  .journey-step.from-\[\#9b5de5\]{ --phase-accent:#9b5de5; } /* Agent */
+  .journey-step.from-\[\#ef476f\]{ --phase-accent:#ef476f; } /* Feuille de route */
+  
+  .journey-step .space-y-1.5 > div{
+    border:1px solid rgba(255,255,255,.28);
+    background:rgba(255,255,255,.08);
+    border-radius:10px;
+    padding:6px 8px !important;
+    line-height:1.25;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+  }
+  @supports (color: color-mix(in srgb, white, black)){
+    .journey-step .space-y-1.5 > div{
+      border-color:color-mix(in srgb, var(--phase-accent) 55%, white 45%) !important;
+      background:color-mix(in srgb, var(--phase-accent) 14%, transparent);
+      box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--phase-accent) 28%, transparent);
+    }
+  }
+  
+  /* =========================
+     Grille des modules (section "La plateforme")
+     — avec PETITES CARTES (meta‑pills) teintes par phase
+     ========================= */
+  .modules-grid{
+    display:grid;grid-template-columns:repeat(12,1fr);gap:12px;
+  }
+  .mod-card{
+    --phase-accent:#e5e7eb;                /* fallback */
+    grid-column:span 12;
+    background:#fff;
+    border:1.5px solid color-mix(in srgb, var(--phase-accent) 35%, #e5e7eb 65%);
+    border-radius:14px;
+    padding:12px;
+    box-shadow:0 4px 14px rgba(2,6,23,.04);
+    transition:transform .15s ease, box-shadow .2s ease, border-color .2s ease;
+    position:relative;
+  }
+  .mod-card::before{
+    content:"";
+    position:absolute;inset:0 0 auto 0;height:6px;border-radius:14px 14px 0 0;
+    background:linear-gradient(90deg,#e5e7eb,#e5e7eb);
+    pointer-events:none;
+  }
+  /* ligne de titre */
+  .mod-card h3{
+    margin:2px 0 6px;
+    font-weight:700;
+    font-size:.95rem;
+    color:#0f172a;
+  }
+  
+  /* >>> meta‑pill de description dans chaque module <<< */
+  .modules-grid .mod-card p{
+    display:block;
+    margin:0;
+    padding:8px 10px;
+    border-radius:10px;
+    line-height:1.45;
+    font-size:.88rem;
+    border:1px solid color-mix(in srgb, var(--phase-accent) 42%, #e5e7eb 58%);
+    background:color-mix(in srgb, var(--phase-accent) 12%, #ffffff);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.6);
+  }
+  
+  /* hover global */
+  .mod-card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 12px 28px rgba(2,6,23,.12);
+    border-color:color-mix(in srgb, var(--phase-accent) 55%, #d1d5db 45%);
+  }
+  
+  /* Déclinaisons d’accent par phase */
+  .mod--diag{   --phase-accent:#0077d2; }
+  .mod--obs{    --phase-accent:#ffb703; }
+  .mod--canvas{ --phase-accent:#06d6a0; }
+  .mod--agent{  --phase-accent:#9b5de5; }
+  .mod--roadmap{--phase-accent:#ef476f; }
+  
+  /* Barre supérieure en dégradé cohérente (si tu la gardes) */
+  .mod--diag::before{   background:linear-gradient(90deg,#0077d2,#005fa3) }
+  .mod--obs::before{    background:linear-gradient(90deg,#ffb703,#fb8500) }
+  .mod--canvas::before{ background:linear-gradient(90deg,#06d6a0,#118ab2) }
+  .mod--agent::before{  background:linear-gradient(90deg,#9b5de5,#6a4c93) }
+  .mod--roadmap::before{background:linear-gradient(90deg,#ef476f,#d90429) }
+  
+  /* Disposition responsive */
+  @media (min-width:640px){ .mod-card{ grid-column:span 6 } }
+  @media (min-width:1024px){ .mod-card--wide{ grid-column:span 12 } }
+  
+  /* Légers glows colorés au hover */
+  .mod--diag:hover{   box-shadow:0 14px 30px rgba(0,119,210,.18) }
+  .mod--obs:hover{    box-shadow:0 14px 30px rgba(251,133,0,.18) }
+  .mod--canvas:hover{ box-shadow:0 14px 30px rgba(17,138,178,.18) }
+  .mod--agent:hover{  box-shadow:0 14px 30px rgba(155,93,229,.18) }
+  .mod--roadmap:hover{box-shadow:0 14px 30px rgba(239,71,111,.18) }
+  
+  /* =========================
+     JourneyView – structure identique à index.html
+     ========================= */
+  #routeView{background:#fff}
+  #routeView .wrap{
+    max-width:var(--body-max);
+    margin-inline:auto;
+    padding-inline:var(--container-pad);
+    padding-top:12px;padding-bottom:12px;
+  }
+  #routeView .head{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:8px 0 12px;border-bottom:1px solid #eef2f7;
+  }
+  #routeSubtitle{
+    margin-top:.15rem;color:#475569;
+    font:600 clamp(.9rem,1.1vw,.98rem)/1.35 Inter,system-ui,sans-serif
+  }
+  #routeText{margin:12px 0 6px;color:#475569;font-size:.92rem}
+  
+  /* S’assure que les cartes dans routeView utilisent la même règle 1‑ligne */
+  #routeCards{max-width:var(--body-max)}
+  
