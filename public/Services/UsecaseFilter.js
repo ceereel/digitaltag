@@ -1,145 +1,190 @@
+// /public/Services/UsecaseFilter.js
+// Grille des “use cases” + construction de la page recommandation
+
+// ⚠️ Chemins en minuscules (FS sensibles à la casse)
 import { renderCards } from '../components/Cards.js';
-import { getAll } from './PhaseService.js';
+import { getAll }     from './PhaseService.js';
 import { animateJourney } from './AnimationServices.js';
 
+// Ordre canonique des modules (1→5)
+const ORDER = [1, 2, 3, 4, 5];
+
+// Use cases (texte court pour lisibilité)
 const USE_CASES = [
   {
-    label: "faire un diagnostic",
+    label: "Je veux une vision claire de ma maturité digitale",
     modules: [1],
     accent: "#0077d2",
-    description: "Obtenez une vision claire et rapide de la maturité digitale de votre PME."
+    description: "Radars & scores pour identifier forces/faiblesses et priorités."
   },
   {
-    label: "une comparaison sectorielle",
-    modules: [1, 2],
+    label: "Je veux me situer par rapport à mes pairs et mon secteur",
+    modules: [2],
     accent: "#27AE60",
-    description: "Comparez vos résultats avec ceux d’entreprises similaires de votre secteur."
+    description: "Comparaisons sectorielles et par profil pour objectiver vos choix."
   },
   {
-    label: "créer un canevas de transformation",
+    label: "Je veux visualiser la trajectoire de l'entreprise",
     modules: [3],
     accent: "#8E44AD",
-    description: "Structurez vos actions digitales dans un plan visuel et partagé."
+    description: "Canevas pour structurer objectifs, jalons et ressources."
   },
   {
-    label: "discuter avec un agent IA",
+    label: "Je veux des recommandations immédiates et contextualisées",
     modules: [4],
     accent: "#FF884D",
-    description: "Recevez des réponses instantanées et adaptées grâce à un assistant intelligent."
+    description: "Agent IA pour suggestions d’actions en temps réel."
   },
   {
-    label: "générer une feuille de route",
+    label: "Je veux piloter mon plan d’action",
     modules: [5],
     accent: "#E74C3C",
-    description: "Planifiez vos projets digitaux avec des échéances, budgets et indicateurs clairs."
+    description: "Timeline, budgets et KPI pour suivre l’exécution."
   }
 ];
 
-let selectedIndexes = [];
+// Sélection courante (indices USE_CASES)
+let selectedIndexes = new Set();
 
+/**
+ * Rendu des cartes de sélection + interactions.
+ * @param {HTMLElement} container - conteneur .grid qui recevra les cartes
+ * @param {HTMLElement|null} phraseEl - élément où afficher la phrase lisible
+ */
 function renderUsecaseFilter(container, phraseEl) {
-  container.innerHTML = '';
-  selectedIndexes = [];
+  if (!container) return;
 
-  // Création du bouton de validation
+  // Reset
+  container.innerHTML = '';
+  selectedIndexes = new Set();
+
+  // Bouton de validation (sous la grille)
   const validateBtn = document.createElement('button');
-  validateBtn.textContent = '✅ Valider mon choix';
-  validateBtn.className = 'hidden mt-4 mx-auto block bg-[#0077d2] text-white text-sm px-4 py-2 rounded-lg shadow';
+  validateBtn.textContent = 'Valider mon choix';
+  validateBtn.className = 'hidden mt-4 mx-auto block btn-validate';
   validateBtn.disabled = true;
 
+  // Rendu des cartes
   USE_CASES.forEach((usecase, index) => {
     const card = document.createElement('div');
-    card.className =
-      'rounded-xl border-2 p-4 cursor-pointer transition-transform duration-200 shadow-sm hover:shadow-md hover:-translate-y-1';
-    card.style.borderColor = usecase.accent;
+    card.className = [
+      'rounded-xl border-2 p-4 cursor-pointer transition-transform duration-200',
+      'shadow-sm bg-gray-50 text-gray-700',
+      'hover:bg-[#0077d2] hover:text-white hover:shadow-md hover:-translate-y-1'
+    ].join(' ');
+    card.tabIndex = 0; // A11y
     card.dataset.index = index;
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-pressed', 'false');
 
-    const label = document.createElement('p');
-    label.className = 'font-semibold text-sm';
-    label.textContent = usecase.label.charAt(0).toUpperCase() + usecase.label.slice(1);
-    label.style.color = usecase.accent;
+    const title = document.createElement('p');
+    title.className = 'font-semibold text-sm';
+    title.textContent = usecase.label;
 
     const desc = document.createElement('p');
-    desc.className = 'text-xs text-gray-600 mt-1';
+    desc.className = 'text-xs mt-1 opacity-90';
     desc.textContent = usecase.description;
 
-    card.appendChild(label);
+    card.appendChild(title);
     card.appendChild(desc);
     container.appendChild(card);
 
-    card.addEventListener('click', () => {
-      const i = selectedIndexes.indexOf(index);
-      if (i >= 0) {
-        selectedIndexes.splice(i, 1); // Deselect
-      } else {
-        if (selectedIndexes.length >= 2) return;
-        selectedIndexes.push(index); // Select
-      }
-
+    const toggle = () => {
+      if (selectedIndexes.has(index)) selectedIndexes.delete(index);
+      else selectedIndexes.add(index);
       updateSelection(container);
       updateValidationState(validateBtn, phraseEl);
+    };
+
+    card.addEventListener('click', toggle);
+    card.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        toggle();
+      }
     });
   });
 
-  // Bouton "Valider"
+  // Validation → ouvre la page recommandation
   validateBtn.addEventListener('click', () => {
-    if (selectedIndexes.length === 0) return;
+    if (selectedIndexes.size === 0) return;
 
-    const selected = selectedIndexes.map(i => USE_CASES[i]);
-    const phrases = selected.map(s => `« ${s.label} »`);
-    phraseEl.textContent = `Je voudrais ${phrases.join(' et ')}.`;
+    const selected = [...selectedIndexes].map(i => USE_CASES[i]);
 
-    const moduleIds = [...new Set(selected.flatMap(s => s.modules))];
-    const allPhases = getAll();
-    const selectedPhases = allPhases.filter(p => moduleIds.includes(p.id));
-    selectedPhases.sort((a, b) => moduleIds.indexOf(a.id) - moduleIds.indexOf(b.id));
+    // Liste de modules unique, ordonnée
+    let moduleIds = unique(selected.flatMap(s => s.modules));
 
-    const filteredContainer = document.getElementById('filteredCards');
-    if (!filteredContainer) {
-      console.warn('❌ Élément #filteredCards introuvable');
-      return;
+    // “Tout coché” → 1..5
+    if (selectedIndexes.size === USE_CASES.length) moduleIds = [1,2,3,4,5];
+
+    // Si 5 (Roadmap) sans 3 (Canevas), on ajoute 3 avant
+    if (moduleIds.includes(5) && !moduleIds.includes(3)) moduleIds.push(3);
+
+    moduleIds.sort((a, b) => ORDER.indexOf(a) - ORDER.indexOf(b));
+
+    // Phases choisies
+    const phases = getAll()
+      .filter(p => moduleIds.includes(p.id))
+      .sort((a, b) => moduleIds.indexOf(a.id) - moduleIds.indexOf(b.id));
+
+    // Construit les cartes dans un conteneur “stage” (pas d’intro ici)
+    const stage = document.createElement('div');
+    const stageId = `ucStage-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
+    stage.id = stageId;
+    renderCards(stage, phases, []); // ⬅️ pas d’intro dans le row
+
+    // Recommandation text pour JourneyView (#routeText)
+    const recommendationText = 'Commencez par ces phases, puis itérez selon vos priorités.';
+
+    // Ouvre la page reco en DÉPLACANT les vrais nœuds pour garder les listeners
+    if (typeof window.showRecommendedJourney === 'function') {
+      document.body.appendChild(stage);
+      window.showRecommendedJourney({
+        cardsContainerId: stageId, // JourneyView déplacera les enfants vers #routeCards
+        subtitle: selected.map(s => s.label).join(' · '),
+        recommendationText
+      });
     }
 
-    filteredContainer.innerHTML = '';
-    renderCards(filteredContainer, selectedPhases);
-    animateJourney();
-    document.getElementById('filteredOverlay')?.classList.remove('hidden');
+    // Animation (optionnelle)
+    try { if (typeof animateJourney === 'function') animateJourney(); } catch {}
   });
 
-  container.parentElement.appendChild(validateBtn);
-
-  // Gestion du bouton de réinitialisation
-  const overlay = document.getElementById('filteredOverlay');
-  overlay?.addEventListener('click', e => {
-    if (e.target.id === 'resetFilter' || e.target.id === 'filteredOverlay') {
-      overlay.classList.add('hidden');
-      phraseEl.textContent = '';
-      selectedIndexes = [];
-      updateSelection(container);
-      validateBtn.classList.add('hidden');
-      const filteredContainer = document.getElementById('filteredCards');
-      if (filteredContainer) filteredContainer.innerHTML = '';
-    }
-  });
+  // Bouton sous la grille
+  container.after(validateBtn);
 }
 
+/* ===== Helpers d’UI ===== */
+
+/** Met à jour l’état visuel des cartes sélectionnées (bleu persistant). */
 function updateSelection(container) {
   const cards = container.querySelectorAll('div[data-index]');
-  cards.forEach((card, i) => {
-    card.classList.toggle('ring-2', selectedIndexes.includes(i));
-    card.classList.toggle('ring-offset-2', selectedIndexes.includes(i));
+  cards.forEach(card => {
+    const i = Number(card.dataset.index);
+    const on = selectedIndexes.has(i);
+    // Utilise la classe .selected (déjà stylée dans styles.css)
+    card.classList.toggle('selected', on);
+    card.setAttribute('aria-pressed', on ? 'true' : 'false');
   });
 }
 
+/** Affiche/masque le bouton et la phrase. */
 function updateValidationState(button, phraseEl) {
-  if (selectedIndexes.length === 0) {
-    button.classList.add('hidden');
-    button.disabled = true;
-    phraseEl.textContent = '';
-  } else {
-    button.classList.remove('hidden');
-    button.disabled = false;
+  if (!button) return;
+  const empty = selectedIndexes.size === 0;
+  button.classList.toggle('hidden', empty);
+  button.disabled = empty;
+  if (phraseEl && empty) phraseEl.textContent = '';
+}
+
+/** Unique en conservant l’ordre d’apparition. */
+function unique(arr) {
+  const seen = new Set();
+  const out = [];
+  for (const v of arr) {
+    if (!seen.has(v)) { seen.add(v); out.push(v); }
   }
+  return out;
 }
 
 export { renderUsecaseFilter };
