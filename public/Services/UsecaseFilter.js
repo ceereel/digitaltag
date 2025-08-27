@@ -3,7 +3,7 @@
 
 // ⚠️ Chemins en minuscules (FS sensibles à la casse)
 import { renderCards } from '../components/Cards.js';
-import { getAll }     from './PhaseService.js';
+import { getAll }      from './PhaseService.js';
 import { animateJourney } from './AnimationServices.js';
 
 // Ordre canonique des modules (1→5)
@@ -131,18 +131,17 @@ function renderUsecaseFilter(container, phraseEl) {
     const stage = document.createElement('div');
     const stageId = `ucStage-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
     stage.id = stageId;
-    renderCards(stage, phases, []); // ⬅️ pas d’intro dans le row
-
-    // Recommandation text pour JourneyView (#routeText)
-    const recommendationText = 'Commencez par ces phases, puis itérez selon vos priorités.';
+    renderCards(stage, phases, []); // ⬅️ on ne passe AUCUNE intro
 
     // Ouvre la page reco en DÉPLACANT les vrais nœuds pour garder les listeners
     if (typeof window.showRecommendedJourney === 'function') {
       document.body.appendChild(stage);
       window.showRecommendedJourney({
-        cardsContainerId: stageId, // JourneyView déplacera les enfants vers #routeCards
-        subtitle: selected.map(s => s.label).join(' · '),
-        recommendationText
+        cardsContainerId: stageId,
+        // ⬇️ on NE PASSE PLUS de sous-titre composé des labels sélectionnés
+        // (JourneyView appliquera son sous-titre par défaut)
+        // subtitle: undefined,
+        // recommendationText: undefined  // pas de texte additionnel
       });
     }
 
