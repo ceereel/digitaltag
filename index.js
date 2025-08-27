@@ -18,15 +18,12 @@ const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'S3cr3t123';
 
 const app = express();
 
-// Gérer __dirname avec ESModules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // CORS autorisé depuis le frontend Render ou localhost
 const ALLOWED_ORIGINS = [
   'http://localhost:4000',
-  'http://127.0.0.1:5500',
-  'http://localhost:3000',
   'https://digitaltag-api.onrender.com'
 ];
 
@@ -45,88 +42,123 @@ app.use(cors({
 
 app.use(express.json());
 
-// ────────────────────────────────────────────────────────────────
-//  Servir tous les fichiers statiques depuis /public
-// ────────────────────────────────────────────────────────────────
-
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/components', express.static(path.join(__dirname, 'public/components')));
 app.use('/services', express.static(path.join(__dirname, 'public/services')));
+
+// Petite route de santé
+app.get('/health', (_req, res) => res.send('OK'));
+
+// ────────────────────────────────────────────────────────────────
+//  Helpers
+// ────────────────────────────────────────────────────────────────
+function getToken(req) {
+  return req.headers['x-admin-token'] || req.query.token || req.get('x-admin-token');
+}
+
+function isNonEmptyString(v) {
+  return typeof v === 'string' && v.trim().length > 0;
+}
+
+function asJSON(value) {
+  try {
+    if (Array.isArray(value)) return JSON.stringify(value);
+    // si on reçoit déjà du JSON string côté client
+    if (typeof value === 'string') {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) return JSON.stringify(parsed);
+    }
+  } catch {}
+  return JSON.stringify([]);
+}
 
 // ────────────────────────────────────────────────────────────────
 //  API Routes
 // ────────────────────────────────────────────────────────────────
 
 app.get('/feedback', (req, res) => {
-  res.send('✅ API en ligne – POST uniquement');
+  res.send('✅ API en ligne – utilisez POST /feedback pour soumettre un avis.');
 });
 
 app.post('/feedback', (req, res) => {
-  console.log("📥 Données reçues :", req.body);
-
   const {
     organisation,
     sector,
     email,
     module,
     phase,
-    understanding = null,
-    clarity = null,
-    relevance = null,
-    navigation = null,
-    reuse = null,
-    comment = '—'
-  } = req.body;
 
-  // Vérifie la présence des champs obligatoires
-  if (!organisation || !sector || !email || !module || !phase) {
-    return res.status(400).send("Champs requis manquants");
+    relevance_now = null,       // 1..5
+    maturity_fit = null,        // 1..5 (slider)
+    expected_impact = null,     // "Rapide" | "Modéré" | "Structurant" | "Transversal"
+    implementation_ease = null, // 1..5
+    complementarity = [],       // array de phases
+    deliverable_clarity = null, // 1..5
+    priority = null,            // "Haute" | "Moyenne" | "Basse"
+    support_needed = null,      // "Aucun" | "Agent IA" | "Coaching" | "Les deux"
+    time_to_start = null,       // "Immédiat" | "< 1 mois" | "1–3 mois" | "> 3 mois"
+    nps = null,                 // 0..10
+    comment = ''                // texte libre
+  } = req.body ?? {};
+
+  if (![organisation, sector, email, module, phase].every(isNonEmptyString)) {
+    return res.status(400).send('Champs requis manquants (organisation, sector, email, module, phase).');
   }
 
   try {
     const stmt = db.prepare(`
       INSERT INTO evaluations (
-        organisation, sector, email, module, phase,
-        understanding, clarity, relevance, navigation, reuse, comment
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        organisation, sector, email,
+        module, phase,
+        relevance_now, maturity_fit, expected_impact, implementation_ease,
+        complementarity, deliverable_clarity,
+        priority, support_needed, time_to_start,
+        nps, comment
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     stmt.run(
-      organisation,
-      sector,
-      email,
-      module,
-      phase,
-      understanding,
-      clarity,
-      relevance,
-      navigation,
-      reuse,
-      comment
+      organisation?.trim(),
+      sector?.trim(),
+      email?.trim(),
+      module?.trim(),
+      phase?.trim(),
+      relevance_now ?? null,
+      maturity_fit ?? null,
+      expected_impact ?? null,
+      implementation_ease ?? null,
+      asJSON(complementarity),
+      deliverable_clarity ?? null,
+      priority ?? null,
+      support_needed ?? null,
+      time_to_start ?? null,
+      nps ?? null,
+      comment ?? ''
     );
 
     res.sendStatus(200);
   } catch (err) {
-    console.error("❌ Erreur SQLite :", err.message);
+    console.error('❌ Erreur SQLite (POST /feedback):', err.message);
     res.status(500).send("Erreur lors de l'enregistrement");
   }
 });
 
 app.get('/admin/feedback', (req, res) => {
-  const token = req.headers['x-admin-token'];
-  if (token !== ADMIN_TOKEN) return res.status(403).send("Accès refusé – jeton invalide");
+  const token = getToken(req);
+  if (token !== ADMIN_TOKEN) return res.status(403).send('Accès refusé – jeton invalide');
 
   try {
     const rows = db.prepare('SELECT * FROM evaluations ORDER BY created_at DESC').all();
     res.json(rows);
   } catch (err) {
-    res.status(500).send("Erreur lors de la lecture de la base");
+    console.error('❌ Erreur SQLite (GET /admin/feedback):', err.message);
+    res.status(500).send('Erreur lors de la lecture de la base');
   }
 });
 
 app.get('/admin/pdf', (req, res) => {
-  const token = req.headers['x-admin-token'];
-  if (token !== ADMIN_TOKEN) return res.status(403).send("Accès refusé – jeton invalide");
+  const token = getToken(req);
+  if (token !== ADMIN_TOKEN) return res.status(403).send('Accès refusé – jeton invalide');
 
   try {
     const rows = db.prepare('SELECT * FROM evaluations ORDER BY created_at DESC').all();
@@ -135,36 +167,55 @@ app.get('/admin/pdf', (req, res) => {
     res.setHeader('Content-Type', 'application/pdf');
     res.send(pdfBuffer);
   } catch (err) {
-    res.status(500).send("Erreur export PDF");
+    console.error('❌ Erreur export PDF:', err.message);
+    res.status(500).send('Erreur export PDF');
   }
 });
 
-// (Optionnel) route CSV si tu ajoutes l'export
 app.get('/admin/csv', (req, res) => {
-  const token = req.query.token;
-  if (token !== ADMIN_TOKEN) return res.status(403).send("Accès refusé – jeton invalide");
+  const token = getToken(req);
+  if (token !== ADMIN_TOKEN) return res.status(403).send('Accès refusé – jeton invalide');
 
   try {
     const rows = db.prepare('SELECT * FROM evaluations ORDER BY created_at DESC').all();
-    const header = Object.keys(rows[0]).join(',');
-    const csv = rows.map(r => Object.values(r).join(',')).join('\n');
+
+    if (!rows || rows.length === 0) {
+      res.setHeader('Content-Disposition', 'attachment; filename="feedbacks.csv"');
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      return res.send(''); // CSV vide
+    }
+
+    const headers = Object.keys(rows[0]);
+
+    const escapeCSV = (val) => {
+      if (val === null || val === undefined) return '';
+      const s = String(val);
+      if (/[",\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+      return s;
+    };
+
+    const csvLines = [
+      headers.map(escapeCSV).join(','),
+      ...rows.map(row => headers.map(h => escapeCSV(row[h])).join(','))
+    ];
+    const csv = csvLines.join('\n');
+
     res.setHeader('Content-Disposition', 'attachment; filename="feedbacks.csv"');
-    res.setHeader('Content-Type', 'text/csv');
-    res.send(header + '\n' + csv);
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.send(csv);
   } catch (err) {
-    res.status(500).send("Erreur export CSV");
+    console.error('❌ Erreur export CSV:', err.message);
+    res.status(500).send('Erreur export CSV');
   }
 });
 
-// Rediriger tout le reste vers index.html (SPA)
-app.get('*', (req, res) => {
+app.get('*', (_req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 // ────────────────────────────────────────────────────────────────
 //  Lancer le serveur
 // ────────────────────────────────────────────────────────────────
-
 app.listen(PORT, () => {
   console.log(`✅ Feedback API + Frontend sur http://localhost:${PORT}`);
 });
