@@ -2,144 +2,269 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin Feedback – Digital TAG</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
-    :root {
-      --accent: #0077d2;
-      --bg: #f8fafc;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --border: #e5e7eb;
+    :root{
+      --accent:#0077d2; --accent-600:#005ea8;
+      --bg:#f8fafc; --paper:#ffffff;
+      --text:#0f172a; --muted:#6b7280;
+      --border:#e5e7eb; --shadow:0 8px 24px rgba(2,6,23,.06);
+      --rad:12px;
     }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      padding: 2rem;
-      max-width: 1200px;
-      margin: auto;
+    *{box-sizing:border-box}
+    body{ margin:0; background:var(--bg); color:var(--text); font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+    .wrap{ max-width:1200px; padding:16px 18px; margin:auto; }
+
+    /* Topbar */
+    .topbar{
+      position:sticky; top:0; z-index:20;
+      background:linear-gradient(180deg,#fff,rgba(255,255,255,.92));
+      border-bottom:1px solid var(--border);
+      backdrop-filter:saturate(1.1) blur(4px);
     }
-    h1 {
-      font-size: 1.8rem;
-      font-weight: 600;
-      color: var(--accent);
-      margin-bottom: 1.5rem;
+    h1{ margin:0; font-size:1.55rem; font-weight:800; color:var(--accent); letter-spacing:-.01em; }
+    .controls{ display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; margin-top:.5rem; }
+    .controls input[type="password"]{ border:1px solid var(--border); border-radius:10px; padding:.55rem .75rem; width:240px; }
+    .btn{
+      background:var(--accent); color:#fff; border:0; border-radius:10px;
+      padding:.55rem .9rem; font-size:.9rem; font-weight:600; cursor:pointer;
+      transition:background .15s, transform .05s;
     }
-    #controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      align-items: center;
-      margin-bottom: 1rem;
+    .btn:hover{ background:var(--accent-600); }
+    .btn:active{ transform:translateY(1px); }
+    #error{ color:#ef4444; font-size:.85rem; margin-left:.5rem; }
+
+    /* Tabs */
+    .tabs{ display:flex; gap:.4rem; margin:12px 0 0; }
+    .tab{
+      background:#fff; border:1px solid var(--border); border-radius:999px;
+      padding:.4rem .85rem; font-weight:600; font-size:.9rem; color:#374151; cursor:pointer;
     }
-    input[type="password"] {
-      padding: 0.5rem 0.75rem;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 0.95rem;
-      width: 220px;
+    .tab.active{ background:var(--accent); border-color:var(--accent); color:#fff; }
+
+    /* Panels */
+    .panel{ display:none; }
+    .panel.active{ display:block; }
+
+    /* KPI tags */
+    .kpiBar{ display:flex; flex-wrap:wrap; gap:.5rem; margin:12px 0 18px; }
+    .kpiBar .tag{
+      background:#fff; border:1px solid var(--border); border-radius:999px;
+      padding:.25rem .65rem; font-size:.8rem; color:#1f2937; box-shadow:0 2px 6px rgba(2,6,23,.04);
     }
-    button {
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 0.5rem 0.9rem;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: background 0.2s;
+
+    /* Cards/charts */
+    .grid{ display:grid; gap:16px; grid-template-columns:repeat(12,minmax(0,1fr)); }
+    .col-12{ grid-column:span 12; }
+    @media (min-width: 900px){ .col-6{ grid-column:span 6; } }
+    @media (min-width: 1200px){ .col-4{ grid-column:span 4; } }
+
+    .card{
+      background:var(--paper); border:1px solid var(--border); border-radius:var(--rad);
+      box-shadow:var(--shadow); padding:12px; display:flex; flex-direction:column; gap:8px; height:100%;
     }
-    button:hover {
-      background: #005ea8;
+    .card h3{ margin:2px 6px 0; font-size:.95rem; font-weight:700; }
+    .chartWrap{ position:relative; width:100%; aspect-ratio: 16 / 10; }
+    .chartWrap canvas{ position:absolute; inset:0; width:100% !important; height:100% !important; }
+
+    /* Lists / search */
+    .bar{ display:flex; gap:.5rem; align-items:center; margin:8px 0 14px; }
+    .input{
+      border:1px solid var(--border); border-radius:10px; padding:.55rem .75rem; background:#fff; font-size:.92rem;
     }
-    #error {
-      color: red;
-      font-size: 0.85rem;
-      margin-left: 0.5rem;
+
+    /* Tables */
+    table{
+      width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--border);
+      border-radius:12px; overflow:hidden; box-shadow:var(--shadow); margin-top:12px;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1.5rem;
-      background: white;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    thead{ background:var(--accent); color:#fff; }
+    th, td{ padding:.7rem; font-size:.88rem; text-align:left; border-bottom:1px solid var(--border); }
+    tbody tr:hover{ background:#f1f5f9; }
+    .chip{
+      display:inline-block; padding:.15rem .5rem; border-radius:999px; font-size:.75rem;
+      background:#eef2ff; color:#3730a3; border:1px solid #e5e7eb;
     }
-    thead {
-      background: var(--accent);
-      color: white;
+
+    /* Responsive tables */
+    @media (max-width: 900px){
+      table, thead, tbody, th, td, tr { display:block; }
+      thead{ display:none; }
+      tr{ margin:0 0 12px; border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+      td{ border:none; padding:.6rem .75rem; }
+      td::before{ content:attr(data-label); display:block; color:var(--muted); font-weight:600; margin-bottom:.2rem; font-size:.8rem; }
     }
-    th, td {
-      padding: 0.75rem;
-      font-size: 0.85rem;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-    }
-    td {
-      color: var(--text);
-    }
-    tbody tr:hover {
-      background: #f1f5f9;
-    }
-    @media (max-width: 900px) {
-      table, thead, tbody, th, td, tr {
-        display: block;
-      }
-      thead {
-        display: none;
-      }
-      tr {
-        margin-bottom: 1.5rem;
-        background: white;
-        padding: 1rem;
-        border-radius: 6px;
-      }
-      td {
-        border: none;
-        padding: 0.4rem 0;
-      }
-      td::before {
-        content: attr(data-label);
-        font-weight: 600;
-        display: block;
-        color: var(--muted);
-        margin-bottom: 0.25rem;
-      }
-    }
+
+    .muted{ color:#6b7280; }
+    .link{ color:var(--accent); text-decoration:none; }
+    .link:hover{ text-decoration:underline; }
   </style>
 </head>
 <body>
-  <h1>🔐 Espace Admin – Feedbacks Digital TAG</h1>
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="wrap">
+      <h1>🔐 Espace Admin – Feedbacks Digital TAG</h1>
+      <div class="controls">
+        <input type="password" id="tokenInput" placeholder="Jeton d'accès admin" />
+        <button id="loadBtn" class="btn">🔄 Charger</button>
+        <button id="pdfBtn" class="btn">📄 PDF</button>
+        <button id="csvBtn" class="btn">📈 CSV</button>
+        <span id="error"></span>
+      </div>
 
-  <div id="controls">
-    <input type="password" id="tokenInput" placeholder="Jeton d'accès admin" />
-    <button id="loadBtn">🔄 Charger</button>
-    <button id="pdfBtn">📄 PDF</button>
-    <button id="csvBtn">📈 CSV</button>
-    <div id="error"></div>
-  </div>
+      <nav class="tabs">
+        <button class="tab active" data-tab="overview">Vue d’ensemble</button>
+        <button class="tab" data-tab="orgs">Organisations</button>
+        <button class="tab" data-tab="evals">Évaluations</button>
+      </nav>
+    </div>
+  </header>
 
-  <table id="feedbackTable">
-    <thead>
-      <tr>
-        <th>Phase</th>
-        <th>Module</th>
-        <th>Organisation</th>
-        <th>Secteur</th>
-        <th>Email</th>
-        <th>Clarté</th>
-        <th>Utilité</th>
-        <th>Esthétique</th>
-        <th>Commentaire</th>
-        <th>Date</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <main class="wrap">
+    <!-- Panel 1: Overview -->
+    <section id="panel-overview" class="panel active">
+      <div id="kpiGlobal" class="kpiBar"></div>
+      <div class="grid">
+        <div class="col-12 col-6 col-4">
+          <div class="card">
+            <h3>Pertinence (1–5)</h3>
+            <div class="chartWrap"><canvas id="chartRelevance"></canvas></div>
+          </div>
+        </div>
+        <div class="col-12 col-6 col-4">
+          <div class="card">
+            <h3>Adéquation maturité (1–5)</h3>
+            <div class="chartWrap"><canvas id="chartMaturity"></canvas></div>
+          </div>
+        </div>
+        <div class="col-12 col-6 col-4">
+          <div class="card">
+            <h3>Facilité de mise en œuvre (1–5)</h3>
+            <div class="chartWrap"><canvas id="chartEase"></canvas></div>
+          </div>
+        </div>
+        <div class="col-12 col-6 col-4">
+          <div class="card">
+            <h3>NPS (0–10)</h3>
+            <div class="chartWrap"><canvas id="chartNPS"></canvas></div>
+          </div>
+        </div>
+        <div class="col-12 col-6 col-4">
+          <div class="card">
+            <h3>Priorité</h3>
+            <div class="chartWrap"><canvas id="chartPriority"></canvas></div>
+          </div>
+        </div>
+        <div class="col-12 col-6 col-4">
+          <div class="card">
+            <h3>Besoin d’accompagnement</h3>
+            <div class="chartWrap"><canvas id="chartSupport"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Panel 2: Organisations -->
+    <section id="panel-orgs" class="panel">
+      <div class="bar">
+        <input id="orgSearch" class="input" placeholder="Rechercher une organisation…" />
+        <span class="muted">Tapez pour filtrer la liste. Cliquez sur 👁 pour voir les évaluations d’une organisation.</span>
+      </div>
+
+      <table id="orgTable">
+        <thead>
+          <tr>
+            <th>Organisation</th>
+            <th>Secteur</th>
+            <th>Nb évaluations</th>
+            <th>Dernière évaluation</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div id="orgDetail" class="hidden">
+        <div class="bar" style="margin-top:16px">
+          <button id="orgBack" class="btn" type="button">↩ Retour à la liste</button>
+          <span id="orgTitle" class="muted"></span>
+        </div>
+
+        <div id="kpiOrg" class="kpiBar"></div>
+
+        <div class="grid">
+          <div class="col-12 col-6 col-4">
+            <div class="card">
+              <h3>Pertinence (1–5)</h3>
+              <div class="chartWrap"><canvas id="orgRelevance"></canvas></div>
+            </div>
+          </div>
+          <div class="col-12 col-6 col-4">
+            <div class="card">
+              <h3>Adéquation maturité (1–5)</h3>
+              <div class="chartWrap"><canvas id="orgMaturity"></canvas></div>
+            </div>
+          </div>
+          <div class="col-12 col-6 col-4">
+            <div class="card">
+              <h3>NPS (0–10)</h3>
+              <div class="chartWrap"><canvas id="orgNPS"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <table id="orgEvalTable">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Phase</th>
+              <th>Module</th>
+              <th>Pertinence</th>
+              <th>Maturité</th>
+              <th>Mise en œuvre</th>
+              <th>NPS</th>
+              <th>Commentaire</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Panel 3: Évaluations -->
+    <section id="panel-evals" class="panel">
+      <div class="bar">
+        <input id="evalSearch" class="input" placeholder="Recherche libre (org, module, phase, email, commentaire…)" />
+        <span class="muted">Astuce : cliquez l’entête pour trier.</span>
+      </div>
+      <table id="feedbackTable">
+        <thead>
+          <tr>
+            <th data-sort="created_at">Date</th>
+            <th data-sort="organisation">Organisation</th>
+            <th data-sort="sector">Secteur</th>
+            <th data-sort="email">Email</th>
+            <th data-sort="phase">Phase</th>
+            <th data-sort="module">Module</th>
+            <th data-sort="relevance_now">Pertinence</th>
+            <th data-sort="maturity_fit">Maturité</th>
+            <th data-sort="implementation_ease">Mise en œuvre</th>
+            <th data-sort="nps">NPS</th>
+            <th>Complémentarité</th>
+            <th>Commentaire</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
 
   <script type="module" src="/components/admin.js"></script>
 </body>
