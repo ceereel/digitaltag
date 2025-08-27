@@ -3,6 +3,7 @@
    ========================= */
    :root{
     --accent:#0077d2;
+    --accent-600:#005fa3;
     --accent-light:#e8f2fc;
     --text:#4b5563;
     --text-dark:#0f172a;
@@ -10,6 +11,7 @@
     --paper:#ffffff;
     --radius:16px;
     --shadow-lg:0 24px 60px rgba(2,6,23,.22);
+    --shadow-md:0 12px 30px rgba(2,6,23,.10);
     --shadow-sm:0 1px 2px rgba(16,24,40,.06);
   
     /* Layout */
@@ -18,8 +20,8 @@
     --container-pad:clamp(12px,3vw,20px);
   
     /* Cartes (PME Journey) */
-    --card-natural-w:280px;  
-    --card-natural-h:320px;  /* Hauteur réduite */
+    --card-natural-w:280px;
+    --card-natural-h:320px;
   }
   
   /* =========================
@@ -59,6 +61,42 @@
   }
   
   /* =========================
+     Header / Footer modernisés
+     ========================= */
+  header.sticky{
+    position:sticky; top:0; z-index:1000;
+    background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(255,255,255,.86));
+    backdrop-filter:saturate(1.2) blur(8px);
+    border-bottom:1px solid #e5e7eb;
+  }
+  header .btn-soft#userBtn{
+    background:#fff;
+    border-color:#e5e7eb;
+    box-shadow:0 6px 18px rgba(2,6,23,.06);
+  }
+  
+  footer{
+    background:linear-gradient(180deg,#fff,#f6f9fd);
+    border-top:1px solid #e6eef7;
+  }
+  footer .border-t{
+    border-color:#e6eef7 !important;
+  }
+
+  .arrow-between{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height: var(--card-natural-h);
+    margin: 0 4px;
+    color: var(--accent);
+  }
+  .arrow-between svg{
+    width:20px;
+    height:20px;
+  }
+  
+  /* =========================
      Boutons
      ========================= */
   button:not(.jm-close):not(#closeBtn):not(#editUser):not(#logoutBtn):not(.journey-step),
@@ -66,7 +104,7 @@
     appearance:none;
     display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
     border:1.5px solid #e5e7eb;border-radius:10px;
-    background:#f9fafb;color:#374151;
+    background:#f9fafb;color:#111;
     padding:8px 12px;
     font:600 .9rem/1 Inter,system-ui,sans-serif;
     cursor:pointer;
@@ -83,14 +121,18 @@
     background:var(--accent);border-color:var(--accent);color:#fff;
   }
   
-  /* Menu utilisateur */
+  /* =========================
+     Menu utilisateur (dropdown)
+     ========================= */
   #userDropdown{
-    background:#fff;border:1px solid #e5e7eb;border-radius:10px;
+    position:absolute; right:0; top:calc(100% + 4px); width:12rem;
+    background:#fff; border:1px solid #e5e7eb; border-radius:10px;
     box-shadow:0 10px 30px rgba(2,6,23,.15);
+    z-index:20000; pointer-events:auto;
   }
   #userDropdown button{
-    all:unset;display:block;width:100%;padding:8px 14px;
-    font:500 .9rem/1.2 Inter,sans-serif;color:#374151;cursor:pointer;
+    all:unset; display:block; width:100%; padding:8px 14px;
+    font:500 .9rem/1.2 Inter,sans-serif; color:#374151; cursor:pointer;
   }
   #userDropdown button:hover{background:#f3f4f6}
   
@@ -102,17 +144,37 @@
     grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
     gap:clamp(10px,2vw,16px);
   }
+  
+  /* — Par défaut : fond blanc, texte noir — */
   #filterBar>div{
-    background:#f9fafb;border:2px solid #d1d5db;border-radius:12px;
-    padding:clamp(10px,2vw,14px);min-height:98px;color:#374151;cursor:pointer;
+    background:#fff;
+    border:1.5px solid #d1d5db;
+    border-radius:12px;
+    padding:clamp(10px,2vw,14px);
+    min-height:98px;
+    color:#111; /* noir par défaut */
+    cursor:pointer;
     transition:transform .2s,background .2s,border-color .2s,color .2s,box-shadow .2s;
     box-shadow:0 6px 18px rgba(0,0,0,.03);
   }
-  #filterBar>div:hover{background:var(--accent);color:#fff;border-color:var(--accent);transform:translateY(-3px)}
+  
+  /* — Hover : accent bleu + texte blanc — */
+  #filterBar>div:hover{
+    background:var(--accent);
+    color:#fff;
+    border-color:var(--accent);
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(0,119,210,.18);
+  }
+  
+  /* — Selected : même style que hover — */
   #filterBar>div.selected{
-    background:var(--accent);border-color:var(--accent);color:#fff;
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
     box-shadow:0 0 0 3px rgba(0,119,210,.28);
   }
+  
   #filterBar p:first-child{font-weight:600;font-size:.92rem}
   #filterBar p:last-child{font-size:.84rem;margin-top:.25rem}
   
@@ -120,35 +182,43 @@
      Modales
      ========================= */
   .journey-modal-overlay{
-    position:fixed;inset:0;z-index:9000;display:grid;place-items:center;
-    padding:clamp(8px,2vw,16px);background:rgba(15,23,42,.45);backdrop-filter:blur(4px);
+    position:fixed; inset:0; z-index:9000; display:grid; place-items:center;
+    padding:clamp(8px,2vw,16px);
+    background:rgba(15,23,42,.45);
+    backdrop-filter:blur(4px);
   }
   #modal{z-index:10000!important}
-  body.noscroll>*:not(.journey-modal-overlay):not(#modal){pointer-events:none}
+  /* Laisse les autres overlays interactifs */
+  body.noscroll > *:not(.journey-modal-overlay):not(#modal):not(#authModal):not(#logoutModal):not(#userDropdown){
+    pointer-events:none;
+  }
   
   .journey-modal{
-    width:min(var(--body-max),95vw);max-height:92dvh;background:var(--paper);
-    border-radius:var(--radius);box-shadow:var(--shadow-lg);
-    display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden;margin:0 auto;
+    width:min(var(--body-max),95vw); max-height:92dvh; background:var(--paper);
+    border-radius:var(--radius); box-shadow:var(--shadow-lg);
+    display:grid; grid-template-rows:auto minmax(0,1fr) auto; overflow:hidden; margin:0 auto;
   }
   .jm-header{
-    display:flex;align-items:center;justify-content:space-between;gap:10px;
-    padding:10px 14px;border-bottom:1px solid #eef2f7;background:linear-gradient(to right,#fff,#f8fbff);
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:10px 14px; border-bottom:1px solid #eef2f7;
+    background:linear-gradient(to right,#fff,#f8fbff);
   }
   .jm-title{margin:0;font:800 clamp(1rem,1.2vw,1.15rem)/1.2 Inter,sans-serif;color:var(--text-dark)}
-  .jm-close{appearance:none;border:0;background:transparent;cursor:pointer;font-size:clamp(1.5rem,2.2vw,1.8rem);line-height:1;padding:4px 10px;border-radius:10px;color:#334155;transition:background .18s,color .18s}
-  .jm-close:hover{background:#eef6ff;color:#0f172a}
-  .jm-body{
-    background:#fff;padding:12px;overflow-y:auto;display:grid;gap:12px;justify-items:center;
+  .jm-close{
+    appearance:none; border:0; background:transparent; cursor:pointer;
+    font-size:clamp(1.5rem,2.2vw,1.8rem); line-height:1; padding:4px 10px;
+    border-radius:10px; color:#334155; transition:background .18s,color .18s;
   }
+  .jm-close:hover{background:#eef6ff;color:#0f172a}
+  .jm-body{background:#fff;padding:12px;overflow-y:auto;display:grid;gap:12px;justify-items:center;}
   .jm-body>*{width:100%;max-width:var(--modal-inner-max)}
   
   /* =========================
-     Cartes horizontales (PME Journey)
+     Cartes horizontales (taille FIXE = comme 5 cartes)
      ========================= */
   .cards-horizontal,#filteredCards,#routeCards{
     --gap:12px;
-    --n:var(--cards-n,5);
+    --n:5; /* ✅ force le calcul comme si 5 cartes étaient visibles */
     --container-w: min(100vw, var(--body-max));
     --slots-w: calc(var(--container-w) - 2*var(--container-pad) - (var(--n) - 1)*var(--gap));
     --slot-w:  calc(var(--slots-w) / var(--n));
@@ -177,34 +247,18 @@
   .journey-step:hover{transform:translateY(-2px) scale(var(--scale));box-shadow:0 8px 22px rgba(0,0,0,.12)}
   .journey-step.selected{outline:3px solid rgba(255,255,255,.4);border-color:rgba(255,255,255,.4);transform:translateY(-2px) scale(var(--scale))}
   
-  /* Flèches centrées verticalement */
-  .arrow-between{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    align-self:center;
-    height:var(--card-natural-h);
-    color:var(--accent);
-  }
-  .arrow-between svg{width:22px;height:22px}
-  
   /* =========================
-     META PILLS (dans les cartes du parcours)
+     META PILLS (cartes)
      ========================= */
-  
-  /* expose une variable d’accent selon le gradient de la carte */
-  .journey-step.from-\[\#0077d2\]{ --phase-accent:#0077d2; } /* Diagnostic */
-  .journey-step.from-\[\#ffb703\]{ --phase-accent:#ffb703; } /* Observatoire */
-  .journey-step.from-\[\#06d6a0\]{ --phase-accent:#06d6a0; } /* Canevas */
-  .journey-step.from-\[\#9b5de5\]{ --phase-accent:#9b5de5; } /* Agent */
-  .journey-step.from-\[\#ef476f\]{ --phase-accent:#ef476f; } /* Feuille de route */
-  
+  .journey-step.from-\[\#0077d2\]{ --phase-accent:#0077d2; }
+  .journey-step.from-\[\#ffb703\]{ --phase-accent:#ffb703; }
+  .journey-step.from-\[\#06d6a0\]{ --phase-accent:#06d6a0; }
+  .journey-step.from-\[\#9b5de5\]{ --phase-accent:#9b5de5; }
+  .journey-step.from-\[\#ef476f\]{ --phase-accent:#ef476f; }
   .journey-step .space-y-1.5 > div{
     border:1px solid rgba(255,255,255,.28);
     background:rgba(255,255,255,.08);
-    border-radius:10px;
-    padding:6px 8px !important;
-    line-height:1.25;
+    border-radius:10px; padding:6px 8px !important; line-height:1.25;
     box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
   }
   @supports (color: color-mix(in srgb, white, black)){
@@ -216,14 +270,11 @@
   }
   
   /* =========================
-     Grille des modules (section "La plateforme")
-     — avec PETITES CARTES (meta‑pills) teintes par phase
+     Grille des modules (plateforme)
      ========================= */
-  .modules-grid{
-    display:grid;grid-template-columns:repeat(12,1fr);gap:12px;
-  }
+  .modules-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px;}
   .mod-card{
-    --phase-accent:#e5e7eb;                /* fallback */
+    --phase-accent:#e5e7eb;
     grid-column:span 12;
     background:#fff;
     border:1.5px solid color-mix(in srgb, var(--phase-accent) 35%, #e5e7eb 65%);
@@ -235,83 +286,112 @@
   }
   .mod-card::before{
     content:"";
-    position:absolute;inset:0 0 auto 0;height:6px;border-radius:14px 14px 0 0;
+    position:absolute; inset:0 0 auto 0; height:6px; border-radius:14px 14px 0 0;
     background:linear-gradient(90deg,#e5e7eb,#e5e7eb);
     pointer-events:none;
   }
-  /* ligne de titre */
-  .mod-card h3{
-    margin:2px 0 6px;
-    font-weight:700;
-    font-size:.95rem;
-    color:#0f172a;
-  }
-  
-  /* >>> meta‑pill de description dans chaque module <<< */
+  .mod-card h3{margin:2px 0 6px; font-weight:700; font-size:.95rem; color:#0f172a;}
   .modules-grid .mod-card p{
-    display:block;
-    margin:0;
-    padding:8px 10px;
-    border-radius:10px;
-    line-height:1.45;
-    font-size:.88rem;
+    display:block; margin:0; padding:8px 10px; border-radius:10px; line-height:1.45; font-size:.88rem;
     border:1px solid color-mix(in srgb, var(--phase-accent) 42%, #e5e7eb 58%);
     background:color-mix(in srgb, var(--phase-accent) 12%, #ffffff);
     box-shadow:inset 0 1px 0 rgba(255,255,255,.6);
   }
-  
-  /* hover global */
   .mod-card:hover{
     transform:translateY(-2px);
     box-shadow:0 12px 28px rgba(2,6,23,.12);
     border-color:color-mix(in srgb, var(--phase-accent) 55%, #d1d5db 45%);
   }
-  
-  /* Déclinaisons d’accent par phase */
-  .mod--diag{   --phase-accent:#0077d2; }
-  .mod--obs{    --phase-accent:#ffb703; }
-  .mod--canvas{ --phase-accent:#06d6a0; }
-  .mod--agent{  --phase-accent:#9b5de5; }
-  .mod--roadmap{--phase-accent:#ef476f; }
-  
-  /* Barre supérieure en dégradé cohérente (si tu la gardes) */
-  .mod--diag::before{   background:linear-gradient(90deg,#0077d2,#005fa3) }
-  .mod--obs::before{    background:linear-gradient(90deg,#ffb703,#fb8500) }
-  .mod--canvas::before{ background:linear-gradient(90deg,#06d6a0,#118ab2) }
-  .mod--agent::before{  background:linear-gradient(90deg,#9b5de5,#6a4c93) }
-  .mod--roadmap::before{background:linear-gradient(90deg,#ef476f,#d90429) }
-  
-  /* Disposition responsive */
+  .mod--diag{--phase-accent:#0077d2;} .mod--obs{--phase-accent:#ffb703;}
+  .mod--canvas{--phase-accent:#06d6a0;} .mod--agent{--phase-accent:#9b5de5;}
+  .mod--roadmap{--phase-accent:#ef476f;}
+  .mod--diag::before{background:linear-gradient(90deg,#0077d2,#005fa3)}
+  .mod--obs::before{background:linear-gradient(90deg,#ffb703,#fb8500)}
+  .mod--canvas::before{background:linear-gradient(90deg,#06d6a0,#118ab2)}
+  .mod--agent::before{background:linear-gradient(90deg,#9b5de5,#6a4c93)}
+  .mod--roadmap::before{background:linear-gradient(90deg,#ef476f,#d90429)}
   @media (min-width:640px){ .mod-card{ grid-column:span 6 } }
   @media (min-width:1024px){ .mod-card--wide{ grid-column:span 12 } }
-  
-  /* Légers glows colorés au hover */
-  .mod--diag:hover{   box-shadow:0 14px 30px rgba(0,119,210,.18) }
-  .mod--obs:hover{    box-shadow:0 14px 30px rgba(251,133,0,.18) }
-  .mod--canvas:hover{ box-shadow:0 14px 30px rgba(17,138,178,.18) }
-  .mod--agent:hover{  box-shadow:0 14px 30px rgba(155,93,229,.18) }
-  .mod--roadmap:hover{box-shadow:0 14px 30px rgba(239,71,111,.18) }
+  .mod--diag:hover{box-shadow:0 14px 30px rgba(0,119,210,.18)}
+  .mod--obs:hover{box-shadow:0 14px 30px rgba(251,133,0,.18)}
+  .mod--canvas:hover{box-shadow:0 14px 30px rgba(17,138,178,.18)}
+  .mod--agent:hover{box-shadow:0 14px 30px rgba(155,93,229,.18)}
+  .mod--roadmap:hover{box-shadow:0 14px 30px rgba(239,71,111,.18)}
   
   /* =========================
-     JourneyView – structure identique à index.html
+     JourneyView – structure identique
      ========================= */
   #routeView{background:#fff}
   #routeView .wrap{
     max-width:var(--body-max);
     margin-inline:auto;
     padding-inline:var(--container-pad);
-    padding-top:12px;padding-bottom:12px;
+    padding-top:12px; padding-bottom:12px;
   }
   #routeView .head{
-    display:flex;align-items:center;justify-content:space-between;gap:10px;
-    padding:8px 0 12px;border-bottom:1px solid #eef2f7;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:8px 0 12px; border-bottom:1px solid #eef2f7;
   }
   #routeSubtitle{
-    margin-top:.15rem;color:#475569;
+    margin-top:.15rem; color:#475569;
     font:600 clamp(.9rem,1.1vw,.98rem)/1.35 Inter,system-ui,sans-serif
   }
-  #routeText{margin:12px 0 6px;color:#475569;font-size:.92rem}
-  
-  /* S’assure que les cartes dans routeView utilisent la même règle 1‑ligne */
+  #routeText{margin:12px 0 6px; color:#475569; font-size:.92rem}
   #routeCards{max-width:var(--body-max)}
+  
+  /* =========================
+     Focus PME Journey Map (section #journey)
+     ========================= */
+  #journey{
+    position:relative; isolation:isolate;
+    border:1px solid color-mix(in srgb, var(--accent) 10%, #e5e7eb 90%);
+    border-radius:18px;
+    box-shadow:var(--shadow-md);
+    background:
+      radial-gradient(800px 300px at 90% -40%, color-mix(in srgb, var(--accent) 10%, #ffffff 90%), transparent 60%),
+      radial-gradient(600px 240px at 10% -40%, color-mix(in srgb, #9b5de5 10%, #ffffff 90%), transparent 60%),
+      linear-gradient(180deg, #f5f7fb 0%, #f0f3f8 100%);
+  }
+  #journey::before{
+    content:""; position:absolute; inset:0 0 auto 0; height:6px; border-radius:18px 18px 0 0;
+    background:linear-gradient(90deg, #0077d2, #118ab2 40%, #9b5de5 70%, #ef476f);
+    opacity:.9; z-index:0;
+  }
+  #journey header.mb-3{
+    margin-bottom:14px!important; padding:10px 12px 6px 12px; border-radius:12px;
+    background:#ffffffcc; backdrop-filter:blur(6px); border:1px solid #e5e7eb;
+  }
+  #journey header.mb-3 h2{display:flex; align-items:center; gap:.5rem;}
+  #journey header.mb-3 h2::before{content: ""; font-size:1.05em;}
+  
+  /* Phrase filtre (titre explicatif) */
+  #filterPhrase{
+    margin: 0.8rem 0 1.2rem 0;
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    background: none;
+    border: none;
+    box-shadow: none;
+    display: block;
+  }
+  
+  /* — use cases dans #journey : hover/selected boost — */
+  #journey #filterBar>div{
+    background:#fff;
+    border:1.5px solid color-mix(in srgb, var(--accent) 20%, #e5e7eb 80%);
+    box-shadow:0 10px 26px rgba(2,6,23,.06);
+    transform:translateY(0) scale(1);
+    color:#111;
+  }
+  #journey #filterBar>div:hover{
+    background:var(--accent); color:#fff; border-color:var(--accent);
+    transform:translateY(-4px) scale(1.02);
+    box-shadow:0 16px 36px rgba(0,119,210,.18);
+  }
+  #journey #filterBar>div.selected{
+    background:var(--accent); color:#fff; border-color:var(--accent);
+    box-shadow:0 0 0 3px rgba(0,119,210,.28);
+  }
   
