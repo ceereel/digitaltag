@@ -1,7 +1,10 @@
 // /public/components/Modal.js
 import { get, getAll } from '../services/PhaseService.js';
+import { getUser }     from '../components/auth.js';
 
-/* Réfs DOM (récupérées paresseusement pour éviter les races au bootstrap) */
+/* -------------------------------------------------------------
+   Références DOM (lazy pour éviter les races au bootstrap)
+-------------------------------------------------------------- */
 function $refs() {
   return {
     modal:    document.getElementById('modal'),
@@ -14,7 +17,9 @@ function $refs() {
   };
 }
 
-/* Couleurs d'accent par phase (alignées avec Cards.js) */
+/* -------------------------------------------------------------
+   Couleurs d'accent par phase (alignées avec Cards.js)
+-------------------------------------------------------------- */
 const PHASE_ACCENTS = {
   1: '#0077d2', // Diagnostic
   2: '#ffb703', // Observatoire
@@ -23,23 +28,67 @@ const PHASE_ACCENTS = {
   5: '#ef476f', // Feuille de route
 };
 
-/* —————————————————————————————————————————————
-   VUE 1 : FICHE DÉTAIL DU MODULE (contenu par défaut)
-   (objectiveSentence volontairement NON affichée ici)
-————————————————————————————————————————————— */
+function getIdByPhaseLabel(label) {
+  const ph = getAll().find(p => p.phaseLabel.trim() === label.trim());
+  return ph ? ph.id : null;
+}
+
+function getActiveRouteIds() {
+  // 1) Route globale (si posée par UsecaseFilter/JourneyView)
+  if (Array.isArray(window.__DTAG_ACTIVE_ROUTE) && window.__DTAG_ACTIVE_ROUTE.length) {
+    return window.__DTAG_ACTIVE_ROUTE
+      .map(n => Number(n))
+      .filter(n => Number.isFinite(n));
+  }
+
+  // 2) Reconstruire depuis la rangée de cartes visible
+  const rows = Array.from(document.querySelectorAll('.cards-horizontal'))
+    .filter(el => el.offsetParent !== null); // visibles
+  if (rows.length) {
+    const ids = Array.from(rows[0].querySelectorAll('.journey-step'))
+      .map(card => {
+        const h3 = card.querySelector('h3');
+        return h3 ? getIdByPhaseLabel(h3.textContent || '') : null;
+      })
+      .filter(Boolean);
+    if (ids.length) return ids;
+  }
+
+  return getAll().map(p => p.id);
+}
+
+function highlightCardForPhaseId(id) {
+  const rows = Array.from(document.querySelectorAll('.cards-horizontal'))
+    .filter(el => el.offsetParent !== null);
+  if (!rows.length) return;
+
+  const phases = getAll();
+  const target = phases.find(ph => ph.id === Number(id));
+  if (!target) return;
+
+  const cards = rows[0].querySelectorAll('.journey-step');
+  cards.forEach(card => {
+    card.classList.remove('selected');
+    const h3 = card.querySelector('h3');
+    if (h3 && h3.textContent.trim() === target.phaseLabel.trim()) {
+      card.classList.add('selected');
+    }
+  });
+}
+
+/* =============================================================
+   VUE 1 : FICHE DÉTAIL DU MODULE (vue par défaut de la modale)
+============================================================= */
 function renderDetailView(p) {
   const { modalBox, mIcon, mTitle, mSub, mContent } = $refs();
 
-  // En-tête
   mIcon.textContent  = p.icon;
   mTitle.textContent = p.phaseLabel;
   mSub.textContent   = p.moduleLabel;
 
-  // Accent visuel
   const accent = PHASE_ACCENTS[p.id] || '#0077d2';
   modalBox.style.borderTop = `8px solid ${accent}`;
 
-  // Corps (sans objectiveSentence)
   mContent.innerHTML = `
     <section class="space-y-3 text-[0.92rem] leading-relaxed text-gray-700">
       <p>${p.phaseExplain}</p>
@@ -66,30 +115,28 @@ function renderDetailView(p) {
     </section>
   `;
 
-  // Actions
   const feedbackBtn = document.getElementById('showFeedbackBtn');
   const nextBtn     = document.getElementById('nextStepBtn');
   if (feedbackBtn) feedbackBtn.addEventListener('click', () => renderFeedbackView(p));
   if (nextBtn)     nextBtn.addEventListener('click', () => openNextPhase(p.id));
 }
 
-/* —————————————————————————————————————————————
-   VUE 2 : FORMULAIRE DE FEEDBACK (ludique & détaillé)
-————————————————————————————————————————————— */
+/* =============================================================
+   VUE 2 : FORMULAIRE DE FEEDBACK
+============================================================= */
 function renderFeedbackView(p) {
   const { mTitle, mSub, mContent } = $refs();
-  // Titre/ sous-titre conservés pour garder le contexte
+
   mTitle.textContent = `${p.phaseLabel} — Feedback`;
   mSub.textContent   = p.moduleLabel;
 
   mContent.innerHTML = `
     <form id="feedbackForm" class="space-y-5 text-[0.92rem] leading-relaxed text-gray-700">
-      <!-- Aide -->
       <p class="text-gray-600 text-[0.88rem]">
         Merci de nous aider à améliorer le module. Vos réponses restent confidentielles.
       </p>
 
-      <!-- 1. Pertinence -->
+      <!-- 1. Pertinence (étoiles) -->
       <fieldset class="grid gap-2">
         <legend class="font-semibold">🎯 Pertinence pour vos besoins actuels</legend>
         <p class="text-xs text-gray-500">Dans quelle mesure ce module correspond à vos enjeux immédiats ?</p>
@@ -171,7 +218,7 @@ function renderFeedbackView(p) {
         </div>
       </fieldset>
 
-      <!-- 7. Priorité + Accompagnement + Délai (sélecteurs/boutons) -->
+      <!-- 7. Priorité / Accompagnement / Délai -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <fieldset>
           <legend class="font-semibold">🚦 Priorité</legend>
@@ -234,7 +281,6 @@ function renderFeedbackView(p) {
     </form>
   `;
 
-  // Boutons actions
   const cancelBtn = document.getElementById('cancelFeedbackBtn');
   if (cancelBtn) cancelBtn.addEventListener('click', () => renderDetailView(p));
 
@@ -244,29 +290,36 @@ function renderFeedbackView(p) {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      // 🔹 Lire l’utilisateur ACTUEL stocké par auth.js
+      const user = getUser();
+      if (!user || !user.org || !user.sect || !user.mail) {
+        alert("Vos informations utilisateur sont incomplètes. Cliquez sur votre nom en haut à droite pour les compléter, puis réessayez.");
+        return;
+      }
+
       // Collecte des valeurs
       const FD = new FormData(form);
-      const getVal = (name, def='') => FD.get(name) ?? def;
-      const getAll = (name) => FD.getAll(name);
+      const pick   = (name, def='') => FD.get(name) ?? def;
+      const pickAll= (name) => FD.getAll(name);
 
       const payload = {
-        organisation:   'He-Arc',
-        sector:         'Pédagogie',
-        email:          'test@he-arc.ch',
+        organisation:   user.org,
+        sector:         user.sect,
+        email:          user.mail,
         module:         p.moduleLabel,
         phase:          p.phaseLabel,
 
-        relevance_now:       getVal('relevance_now','3'),
-        maturity_fit:        getVal('maturity_fit','3'),
-        expected_impact:     getVal('expected_impact','Structurant'),
-        implementation_ease: getVal('implementation_ease','3'),
-        complementarity:     getAll('complementarity'),    // tableau
-        deliverable_clarity: getVal('deliverable_clarity','3'),
-        priority:            getVal('priority','Moyenne'),
-        support_needed:      getVal('support_needed','Aucun'),
-        time_to_start:       getVal('time_to_start','< 1 mois'),
-        nps:                 getVal('nps','8'),
-        comment:             getVal('comment','')
+        relevance_now:       pick('relevance_now','3'),
+        maturity_fit:        pick('maturity_fit','3'),
+        expected_impact:     pick('expected_impact','Structurant'),
+        implementation_ease: pick('implementation_ease','3'),
+        complementarity:     JSON.stringify(pickAll('complementarity')),
+        deliverable_clarity: pick('deliverable_clarity','3'),
+        priority:            pick('priority','Moyenne'),
+        support_needed:      pick('support_needed','Aucun'),
+        time_to_start:       pick('time_to_start','< 1 mois'),
+        nps:                 pick('nps','8'),
+        comment:             pick('comment','')
       };
 
       try {
@@ -280,7 +333,8 @@ function renderFeedbackView(p) {
           alert('Merci pour votre retour 🙏');
           closeModal();
         } else {
-          alert("Erreur lors de l'envoi du feedback.");
+          const txt = await res.text().catch(()=> 'Erreur lors de l’envoi');
+          alert(txt || "Erreur lors de l'envoi du feedback.");
         }
       } catch (err) {
         console.error('❌ Erreur fetch :', err);
@@ -290,21 +344,25 @@ function renderFeedbackView(p) {
   }
 }
 
-/* —————————————————————————————————————————————
+/* =============================================================
    Navigation vers l’étape suivante
-————————————————————————————————————————————— */
+============================================================= */
 function openNextPhase(currentId) {
-  const phases = getAll().sort((a,b) => a.id - b.id);
-  const i = phases.findIndex(ph => ph.id === Number(currentId));
-  if (i < 0) return;
-  const next = phases[i + 1];
-  if (next) openModal(next.id);
-  else alert('✅ Vous êtes à la dernière étape.');
+  const route = getActiveRouteIds();              // e.g. [1,4] si 2 use cases
+  const idx   = route.indexOf(Number(currentId)); // position actuelle dans la route
+  if (idx < 0) return;
+
+  const nextId = route[idx + 1];
+  if (nextId) {
+    openModal(nextId);
+  } else {
+    alert('✅ Vous êtes à la dernière étape de votre parcours sélectionné.');
+  }
 }
 
-/* —————————————————————————————————————————————
+/* =============================================================
    API PUBLIQUE
-————————————————————————————————————————————— */
+============================================================= */
 export function openModal(id) {
   const p = get(id);
   if (!p) return;
@@ -313,23 +371,22 @@ export function openModal(id) {
 
   renderDetailView(p);
 
-  // Afficher la modale
   modal.classList.remove('hidden');
   modal.classList.add('flex');
   document.body.classList.add('noscroll');
+
+  highlightCardForPhaseId(id);
 }
 
 export function setupModal() {
   const { modal, closeBtn } = $refs();
   if (!modal) return;
 
-  // Fermer (X)
   if (closeBtn && !closeBtn.dataset.bound) {
     closeBtn.dataset.bound = '1';
     closeBtn.addEventListener('click', closeModal);
   }
 
-  // Fermer (Esc / overlay)
   if (!modal.dataset.bound) {
     modal.dataset.bound = '1';
     modal.addEventListener('click', (e) => {
@@ -349,5 +406,4 @@ function closeModal() {
   document.body.classList.remove('noscroll');
 }
 
-// Option compat globale
 window.closeModal = closeModal;
