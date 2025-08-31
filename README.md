@@ -80,7 +80,7 @@ DigitalTAG/
 ### Étapes d’installation
 1. Cloner le dépôt :
    ```bash
-   git clone https://github.com/mon-compte/DigitalTAG.git
+   git clone https://github.com/ceereel/DigitalTAG.git
    cd DigitalTAG
 2. Installer les dépendances :
 npm install
