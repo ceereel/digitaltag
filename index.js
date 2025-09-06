@@ -46,8 +46,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/components', express.static(path.join(__dirname, 'public/components')));
 app.use('/services', express.static(path.join(__dirname, 'public/services')));
 
-// Petite route de santé
-app.get('/health', (_req, res) => res.send('OK'));
 
 // ────────────────────────────────────────────────────────────────
 //  Helpers
@@ -72,10 +70,21 @@ function asJSON(value) {
   return JSON.stringify([]);
 }
 
+function requireAdmin(req, res) {
+    const token = getToken(req);
+    if (token !== ADMIN_TOKEN) return res.status(403).send('Accès refusé – jeton invalide');
+}
+
+
 // ────────────────────────────────────────────────────────────────
 //  API Routes
 // ────────────────────────────────────────────────────────────────
 
+// Petite route de santé
+app.get('/health', (_req, res) => res.send('OK'));
+
+
+// À quoi sert cet endpoint ?
 app.get('/feedback', (req, res) => {
   res.send('✅ API en ligne – utilisez POST /feedback pour soumettre un avis.');
 });
@@ -144,37 +153,33 @@ app.post('/feedback', (req, res) => {
 });
 
 app.get('/admin/feedback', (req, res) => {
-  const token = getToken(req);
-  if (token !== ADMIN_TOKEN) return res.status(403).send('Accès refusé – jeton invalide');
-
+  requireAdmin(req, res);
   try {
     const rows = db.prepare('SELECT * FROM evaluations ORDER BY created_at DESC').all();
-    res.json(rows);
+      res.status(200).json(rows);
   } catch (err) {
     console.error('❌ Erreur SQLite (GET /admin/feedback):', err.message);
     res.status(500).send('Erreur lors de la lecture de la base');
   }
 });
 
-app.get('/admin/pdf', (req, res) => {
-  const token = getToken(req);
-  if (token !== ADMIN_TOKEN) return res.status(403).send('Accès refusé – jeton invalide');
+app.get('/admin/pdf', async (req, res) => {
+    requireAdmin(req, res);
+    try {
+        const rows = db.prepare('SELECT * FROM evaluations ORDER BY created_at DESC').all();
+        const pdfBuffer = await buildPdf(rows);
 
-  try {
-    const rows = db.prepare('SELECT * FROM evaluations ORDER BY created_at DESC').all();
-    const pdfBuffer = buildPdf(rows);
-    res.setHeader('Content-Disposition', 'inline; filename="feedbacks.pdf"');
-    res.setHeader('Content-Type', 'application/pdf');
-    res.send(pdfBuffer);
-  } catch (err) {
-    console.error('❌ Erreur export PDF:', err.message);
-    res.status(500).send('Erreur export PDF');
-  }
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'inline; filename="feedbacks.pdf"');
+        res.status(200).send(pdfBuffer);
+    } catch (err) {
+        console.error('❌ Erreur export PDF:', err.message);
+        res.status(500).send('Erreur export PDF');
+    }
 });
 
 app.get('/admin/csv', (req, res) => {
-  const token = getToken(req);
-  if (token !== ADMIN_TOKEN) return res.status(403).send('Accès refusé – jeton invalide');
+    requireAdmin(req, res);
 
   try {
     const rows = db.prepare('SELECT * FROM evaluations ORDER BY created_at DESC').all();
@@ -185,6 +190,8 @@ app.get('/admin/csv', (req, res) => {
       return res.send(''); // CSV vide
     }
 
+
+    // Tu peux extraire la construction du csv dans un script js dédié (comme pour le pdf)
     const headers = Object.keys(rows[0]);
 
     const escapeCSV = (val) => {
@@ -202,7 +209,7 @@ app.get('/admin/csv', (req, res) => {
 
     res.setHeader('Content-Disposition', 'attachment; filename="feedbacks.csv"');
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-    res.send(csv);
+    res.status(200).send(csv);
   } catch (err) {
     console.error('❌ Erreur export CSV:', err.message);
     res.status(500).send('Erreur export CSV');

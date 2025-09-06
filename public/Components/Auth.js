@@ -42,7 +42,8 @@ function renderAuthModal(user = {}) {
 
         <input type="email" id="authMail" placeholder="Email professionnel"
                class="w-full border px-3 py-2 text-sm rounded"
-               value="${user.mail || ''}" />
+               value="${user.mail || ''}"
+               pattern="^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$" /> <!-- Ajout d'un pattern pour la validation du mail. Tu devras aussi faire la validation lors de la soumission du formulaire-->
 
         <div class="flex justify-between gap-4 pt-4">
           <button id="cancelAuth" class="w-1/2 border border-gray-300 text-sm py-2 rounded hover:bg-gray-100">Annuler</button>
@@ -135,6 +136,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const sect = document.getElementById("authSect")?.value.trim();
       const mail = document.getElementById("authMail")?.value.trim();
       if (!org || !sect || !mail) { alert("Merci de remplir tous les champs."); return; }
+        // Regex + popup simple pour l'email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(mail)) {
+            alert("Merci d’entrer une adresse email valide.");
+            return;
+        }
+
       saveUser({ org, sect, mail });
       setUserOrgLabel();
       closeEl("authModal");

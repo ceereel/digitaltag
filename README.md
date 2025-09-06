@@ -86,6 +86,7 @@ DigitalTAG/
 npm install
 
 3. Initialiser la base de données :
+Préalablement créer le dossier data à la racine du projet : mkdir data. (sqlite3 ne peut pas créer le dossier au démarrage)
 La base feedback.db est générée automatiquement au premier lancement.
 Structure principale :
 

@@ -125,7 +125,7 @@
      Menu utilisateur (dropdown)
      ========================= */
   #userDropdown{
-    position:absolute; right:0; top:calc(100% + 4px); width:12rem;
+    position:absolute; right:0; top:calc(100% + 4px); width:12rem; /* Attention avec les largeurs fixes, ça va dépendre de ta résolution. Essaie de faire ça dynamiquement*/
     background:#fff; border:1px solid #e5e7eb; border-radius:10px;
     box-shadow:0 10px 30px rgba(2,6,23,.15);
     z-index:20000; pointer-events:auto;

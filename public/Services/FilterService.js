@@ -6,6 +6,8 @@ const GOAL_MAP = {
   "organiser un atelier collaboratif": [3, 4, 5],
   "mettre à jour ma feuille de route": [1, 3, 4, 5]
 };
+
+//Function pas utilisée
 S
 export function suggestPhasesForGoals(goals) {
   const all = goals.flatMap(g => GOAL_MAP[g] || []);
