@@ -5,11 +5,14 @@
   "scripts": {
     "start": "node index.js"
   },
+
+  //Pour garder des deps à jour, tu peux utiliser Renovate.
+  //https://www.npmjs.com/package/renovate
   "dependencies": {
-    "better-sqlite3": "^9.6.0",
+    "better-sqlite3": "^9.6.0", //Tu peux clairement faire une montée en version
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
     "express": "^4.21.2",
-    "pdfkit": "^0.13.0"
+    "pdfkit": "^0.13.0" //Ici aussi, montée en version
   }
 }

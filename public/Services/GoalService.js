@@ -16,6 +16,8 @@ function ruleFromText(text){
   return GOAL_RULES.find(r => r.keywords.some(k=>clean.includes(k)));
 }
 
+
+//Fonction pas utilisée, à voir si tu veux la garder pour une future implémentation
 /* ► Renvoie le “parcours” pour 1 ou 2 objectifs                              
    goals = tableau de chaînes                                               */
 export function buildSequence(goals){
