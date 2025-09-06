@@ -132,7 +132,7 @@ Visualiser :
 - Les statistiques graphiques.
 - Exporter en PDF ou CSV si nécessaire.
 
-7. Points forts
+## Points forts
 - Interface modulaire et responsive.
 - Feedbacks regroupés par organisation pour analyse stratégique.
 - Architecture simple (Express + SQLite) → déploiement rapide.
